@@ -29,13 +29,18 @@ class RolePermissionSeeder extends Seeder
             ]);
         }
 
-        $superAdmin = User::firstOrCreate(
+        $superAdmin = User::updateOrCreate(
             ['email' => 'admin@simadu.test'],
             [
                 'name' => 'Super Admin',
+                'username' => 'admin',
+                'phone' => null,
                 'password' => Hash::make('password'),
+                'status' => 'active',
             ]
         );
+
+        $superAdmin->assignRole('super_admin');
 
         $superAdmin->assignRole('super_admin');
     }
