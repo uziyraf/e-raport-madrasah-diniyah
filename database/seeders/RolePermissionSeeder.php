@@ -29,19 +29,52 @@ class RolePermissionSeeder extends Seeder
             ]);
         }
 
-        $superAdmin = User::updateOrCreate(
-            ['email' => 'admin@simadu.test'],
+        $users = [
             [
                 'name' => 'Super Admin',
                 'username' => 'admin',
-                'phone' => null,
-                'password' => Hash::make('password'),
-                'status' => 'active',
-            ]
-        );
+                'email' => 'admin@simadu.test',
+                'role' => 'super_admin',
+            ],
+            [
+                'name' => 'Kepala Sekolah',
+                'username' => 'kepala',
+                'email' => 'kepala@simadu.test',
+                'role' => 'kepala_sekolah',
+            ],
+            [
+                'name' => 'Wali Kelas',
+                'username' => 'wali_kelas',
+                'email' => 'wali.kelas@simadu.test',
+                'role' => 'wali_kelas',
+            ],
+            [
+                'name' => 'Guru Fan',
+                'username' => 'guru_fan',
+                'email' => 'guru.fan@simadu.test',
+                'role' => 'guru_fan',
+            ],
+            [
+                'name' => 'Wali Santri',
+                'username' => 'wali_santri',
+                'email' => 'wali.santri@simadu.test',
+                'role' => 'wali_santri',
+            ],
+        ];
 
-        $superAdmin->assignRole('super_admin');
+        foreach ($users as $userData) {
+            $user = User::updateOrCreate(
+                ['email' => $userData['email']],
+                [
+                    'name' => $userData['name'],
+                    'username' => $userData['username'],
+                    'phone' => null,
+                    'password' => Hash::make('password'),
+                    'status' => 'active',
+                ]
+            );
 
-        $superAdmin->assignRole('super_admin');
+            $user->syncRoles([$userData['role']]);
+        }
     }
 }
