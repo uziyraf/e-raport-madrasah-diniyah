@@ -1,7 +1,4 @@
 
----
-
-# 3. Isi `docs/01-project-context.md`
 
 ```md
 # Project Context
