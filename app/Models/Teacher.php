@@ -16,11 +16,21 @@ class Teacher extends Model
         'teacher_code',
         'name',
         'gender',
+        'birth_place',
+        'birth_date',
         'phone',
+        'email',
         'address',
         'signature_path',
         'status',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'birth_date' => 'date',
+        ];
+    }
 
     public function user(): BelongsTo
     {
@@ -40,5 +50,21 @@ class Teacher extends Model
     public function teachingAssignments(): HasMany
     {
         return $this->hasMany(TeachingAssignment::class);
+    }
+
+    public function currentHomeroomAssignment()
+    {
+        return $this->hasOne(HomeroomAssignment::class)
+            ->whereHas('academicYear', fn($q) => $q->where('is_active', true))
+            ->whereHas('semester', fn($q) => $q->where('is_active', true))
+            ->with('schoolClass.level', 'academicYear', 'semester');
+    }
+
+    public function currentTeachingAssignments()
+    {
+        return $this->hasMany(TeachingAssignment::class)
+            ->whereHas('academicYear', fn($q) => $q->where('is_active', true))
+            ->whereHas('semester', fn($q) => $q->where('is_active', true))
+            ->with('subject', 'schoolClass.level');
     }
 }

@@ -93,10 +93,10 @@ class MasterDataSeeder extends Seeder
 
         // Teachers (link to existing users with teacher roles)
         $teachers = [
-            ['name' => 'Ahmad Fauzi', 'gender' => 'Laki-laki', 'phone' => '081234567890', 'user_id' => User::where('email', 'wali.kelas@simadu.test')->first()?->id],
-            ['name' => 'Siti Nurhaliza', 'gender' => 'Perempuan', 'phone' => '081234567891', 'user_id' => User::where('email', 'guru.fan@simadu.test')->first()?->id],
-            ['name' => 'Muhammad Rizki', 'gender' => 'Laki-laki', 'phone' => '081234567892'],
-            ['name' => 'Fatimah Azzahra', 'gender' => 'Perempuan', 'phone' => '081234567893'],
+            ['name' => 'Ahmad Fauzi', 'gender' => 'male', 'phone' => '081234567890', 'email' => 'ahmad.fauzi@simadu.test', 'user_id' => User::where('email', 'wali.kelas@simadu.test')->first()?->id],
+            ['name' => 'Siti Nurhaliza', 'gender' => 'female', 'phone' => '081234567891', 'email' => 'siti.nurhaliza@simadu.test', 'user_id' => User::where('email', 'guru.fan@simadu.test')->first()?->id],
+            ['name' => 'Muhammad Rizki', 'gender' => 'male', 'phone' => '081234567892', 'birth_place' => 'Jakarta', 'birth_date' => '1990-05-15'],
+            ['name' => 'Fatimah Azzahra', 'gender' => 'female', 'phone' => '081234567893', 'birth_place' => 'Bandung', 'birth_date' => '1992-08-20'],
         ];
 
         foreach ($teachers as $data) {
