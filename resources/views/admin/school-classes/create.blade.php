@@ -20,6 +20,21 @@
             </div>
 
             <div>
+                <label for="grade_level" class="mb-2 block text-sm font-medium text-neutral-700">Tingkat Kelas</label>
+                <input type="number" name="grade_level" id="grade_level" value="{{ old('grade_level') }}"
+                       class="w-full rounded-sm border border-stone-300 bg-white px-4 py-3 text-sm text-zinc-900 outline-none transition focus:border-teal-950 focus:ring-2 focus:ring-teal-950/10"
+                       min="1" max="20">
+                @error('grade_level') <p class="mt-1 text-sm text-red-700">{{ $message }}</p> @enderror
+            </div>
+
+            <div>
+                <label for="parallel_name" class="mb-2 block text-sm font-medium text-neutral-700">Paralel</label>
+                <input type="text" name="parallel_name" id="parallel_name" value="{{ old('parallel_name') }}"
+                       class="w-full rounded-sm border border-stone-300 bg-white px-4 py-3 text-sm text-zinc-900 outline-none transition focus:border-teal-950 focus:ring-2 focus:ring-teal-950/10">
+                @error('parallel_name') <p class="mt-1 text-sm text-red-700">{{ $message }}</p> @enderror
+            </div>
+
+            <div>
                 <label for="name" class="mb-2 block text-sm font-medium text-neutral-700">Nama Kelas</label>
                 <input type="text" name="name" id="name" value="{{ old('name') }}"
                        class="w-full rounded-sm border border-stone-300 bg-white px-4 py-3 text-sm text-zinc-900 outline-none transition focus:border-teal-950 focus:ring-2 focus:ring-teal-950/10">

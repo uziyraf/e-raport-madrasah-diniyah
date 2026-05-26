@@ -24,6 +24,8 @@
                     <tr>
                         <th class="border-b border-stone-300 bg-white px-6 py-4 text-left text-sm font-medium text-neutral-700">Nama</th>
                         <th class="border-b border-stone-300 bg-white px-6 py-4 text-left text-sm font-medium text-neutral-700">Jenjang</th>
+                        <th class="border-b border-stone-300 bg-white px-6 py-4 text-left text-sm font-medium text-neutral-700">Tingkat</th>
+                        <th class="border-b border-stone-300 bg-white px-6 py-4 text-left text-sm font-medium text-neutral-700">Paralel</th>
                         <th class="border-b border-stone-300 bg-white px-6 py-4 text-left text-sm font-medium text-neutral-700">Kode</th>
                         <th class="border-b border-stone-300 bg-white px-6 py-4 text-left text-sm font-medium text-neutral-700">Urutan</th>
                         <th class="border-b border-stone-300 bg-white px-6 py-4 text-left text-sm font-medium text-neutral-700">Status</th>
@@ -35,6 +37,8 @@
                         <tr>
                             <td class="border-t border-stone-300 px-6 py-4 text-base font-normal text-zinc-900">{{ $class->name }}</td>
                             <td class="border-t border-stone-300 px-6 py-4 text-base font-normal text-zinc-900">{{ $class->level->name }}</td>
+                            <td class="border-t border-stone-300 px-6 py-4 text-base font-normal text-zinc-900">{{ $class->grade_level ?? '-' }}</td>
+                            <td class="border-t border-stone-300 px-6 py-4 text-base font-normal text-zinc-900">{{ $class->parallel_name ?? '-' }}</td>
                             <td class="border-t border-stone-300 px-6 py-4 text-base font-normal text-zinc-900">{{ $class->code ?? '-' }}</td>
                             <td class="border-t border-stone-300 px-6 py-4 text-base font-normal text-zinc-900">{{ $class->sort_order }}</td>
                             <td class="border-t border-stone-300 px-6 py-4">
@@ -63,7 +67,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-10 text-center text-sm text-neutral-500">Belum ada data kelas.</td>
+                            <td colspan="8" class="px-6 py-10 text-center text-sm text-neutral-500">Belum ada data kelas.</td>
                         </tr>
                     @endforelse
                 </tbody>

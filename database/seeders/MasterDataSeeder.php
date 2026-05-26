@@ -29,18 +29,27 @@ class MasterDataSeeder extends Seeder
 
         // School Classes
         $levelIds = Level::pluck('id', 'name');
-        $classNames = ['1', '2', '3', '4', '5', '6'];
+        $parallels = ['A', 'B'];
         foreach ($levelIds as $levelName => $levelId) {
-            foreach ($classNames as $i => $name) {
-                if ($levelName === 'Ibtida\'iyah' && $i > 5) break;
-                if ($levelName === 'Tsanawiyah' && $i > 2) break;
-                if ($levelName === 'Aliyah' && $i > 2) break;
-                SchoolClass::create([
-                    'level_id' => $levelId,
-                    'name' => "$levelName $name",
-                    'code' => strtoupper(substr($levelName, 0, 3)) . $name,
-                    'sort_order' => $i + 1,
-                ]);
+            $grades = match ($levelName) {
+                'Ibtida\'iyah' => range(1, 6),
+                'Tsanawiyah' => range(1, 3),
+                'Aliyah' => range(1, 3),
+                default => [],
+            };
+            $sort = 0;
+            foreach ($grades as $grade) {
+                foreach ($parallels as $parallel) {
+                    $sort++;
+                    SchoolClass::create([
+                        'level_id' => $levelId,
+                        'grade_level' => $grade,
+                        'parallel_name' => $parallel,
+                        'name' => "$levelName $grade $parallel",
+                        'code' => strtoupper(substr($levelName, 0, 3)) . $grade . $parallel,
+                        'sort_order' => $sort,
+                    ]);
+                }
             }
         }
 

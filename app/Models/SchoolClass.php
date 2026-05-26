@@ -13,10 +13,17 @@ class SchoolClass extends Model
 
     protected $fillable = [
         'level_id',
+        'grade_level',
+        'parallel_name',
         'name',
         'code',
         'sort_order',
         'status',
+    ];
+
+    protected $casts = [
+        'grade_level' => 'integer',
+        'sort_order' => 'integer',
     ];
 
     public function level(): BelongsTo

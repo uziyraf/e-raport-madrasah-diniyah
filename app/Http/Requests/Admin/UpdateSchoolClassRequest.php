@@ -15,6 +15,8 @@ class UpdateSchoolClassRequest extends FormRequest
     {
         return [
             'level_id' => ['required', 'exists:levels,id'],
+            'grade_level' => ['nullable', 'integer', 'min:1', 'max:20'],
+            'parallel_name' => ['nullable', 'string', 'max:50'],
             'name' => ['required', 'string', 'max:255'],
             'code' => ['nullable', 'string', 'max:50'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
