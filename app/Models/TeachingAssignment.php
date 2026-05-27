@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\Grade;
 
 class TeachingAssignment extends Model
 {
@@ -18,6 +19,11 @@ class TeachingAssignment extends Model
         'academic_year_id',
         'semester_id',
     ];
+
+    public function grades(): HasMany
+    {
+        return $this->hasMany(Grade::class);
+    }
 
     public function teacher(): BelongsTo
     {

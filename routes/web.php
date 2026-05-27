@@ -30,6 +30,19 @@ Route::middleware('auth')->group(function () {
         return redirect()->route('dashboard');
     })->name('guardian.dashboard');
 
+    Route::prefix('guru/nilai')->name('teacher.grades.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Teacher\GradeController::class, 'index'])->name('index');
+        Route::get('/create', [App\Http\Controllers\Teacher\GradeController::class, 'create'])->name('create');
+        Route::post('/', [App\Http\Controllers\Teacher\GradeController::class, 'store'])->name('store');
+        Route::get('/{teachingAssignment}/edit', [App\Http\Controllers\Teacher\GradeController::class, 'edit'])->name('edit');
+        Route::put('/{teachingAssignment}', [App\Http\Controllers\Teacher\GradeController::class, 'update'])->name('update');
+    });
+
+    Route::prefix('wali-kelas/nilai')->name('homeroom.grades.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Homeroom\GradeMonitoringController::class, 'index'])->name('index');
+        Route::get('/{teachingAssignment}', [App\Http\Controllers\Homeroom\GradeMonitoringController::class, 'show'])->name('show');
+    });
+
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('levels', App\Http\Controllers\Admin\LevelController::class);
         Route::resource('school-classes', App\Http\Controllers\Admin\SchoolClassController::class);
@@ -41,6 +54,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('student-enrollments', App\Http\Controllers\Admin\StudentEnrollmentController::class);
         Route::resource('homeroom-assignments', App\Http\Controllers\Admin\HomeroomAssignmentController::class);
         Route::resource('teaching-assignments', App\Http\Controllers\Admin\TeachingAssignmentController::class);
+        Route::get('grades', [App\Http\Controllers\Admin\GradeMonitoringController::class, 'index'])->name('grades.index');
     });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
