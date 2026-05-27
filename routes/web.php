@@ -37,6 +37,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('academic-years', App\Http\Controllers\Admin\AcademicYearController::class);
         Route::resource('semesters', App\Http\Controllers\Admin\SemesterController::class);
         Route::resource('teachers', App\Http\Controllers\Admin\TeacherController::class);
+        Route::resource('students', App\Http\Controllers\Admin\StudentController::class);
     });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

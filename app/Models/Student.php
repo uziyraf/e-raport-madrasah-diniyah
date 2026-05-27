@@ -13,11 +13,16 @@ class Student extends Model
     protected $fillable = [
         'nis',
         'name',
+        'arabic_name',
         'gender',
         'birth_place',
         'birth_date',
         'address',
+        'father_name',
+        'mother_name',
+        'guardian_name',
         'guardian_phone',
+        'photo_path',
         'status',
     ];
 
@@ -36,5 +41,12 @@ class Student extends Model
     public function classEnrollments(): HasMany
     {
         return $this->hasMany(StudentClassEnrollment::class);
+    }
+
+    public function activeEnrollment()
+    {
+        return $this->hasOne(StudentClassEnrollment::class)
+            ->where('is_active', true)
+            ->with('schoolClass.level', 'academicYear', 'semester');
     }
 }

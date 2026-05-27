@@ -104,19 +104,26 @@ class MasterDataSeeder extends Seeder
         }
 
         // Students
-        $genders = ['Laki-laki', 'Perempuan'];
+        $genders = ['male', 'female'];
         $firstNames = ['Ahmad', 'Muhammad', 'Abdullah', 'Siti', 'Aisyah', 'Fatimah', 'Khadijah', 'Maryam', 'Zainab', 'Hafsah'];
         $lastNames = ['Hidayat', 'Nurrahman', 'Fauzi', 'Pratama', 'Wijaya', 'Ramadhan', 'Hakim', 'Syafii', 'Rahman', 'Anwar'];
+        $arabicNames = ['أحمد', 'محمد', 'عبد الله', 'سيتي', 'عائشة', 'فاطمة', 'خديجة', 'مريم', 'زينب', 'حفصة'];
 
         for ($i = 1; $i <= 20; $i++) {
             $gender = $genders[$i % 2];
+            $firstName = $firstNames[array_rand($firstNames)];
+            $lastName = $lastNames[array_rand($lastNames)];
             Student::create([
                 'nis' => '2025' . str_pad((string) $i, 4, '0', STR_PAD_LEFT),
-                'name' => $firstNames[array_rand($firstNames)] . ' ' . $lastNames[array_rand($lastNames)],
+                'name' => $firstName . ' ' . $lastName,
+                'arabic_name' => $arabicNames[array_rand($arabicNames)] . ' ' . $arabicNames[array_rand($arabicNames)],
                 'gender' => $gender,
                 'birth_place' => 'Jakarta',
                 'birth_date' => now()->subYears(10 + ($i % 8))->subDays($i * 10),
                 'address' => "Jl. Contoh No. $i",
+                'father_name' => 'Ayah ' . $lastName,
+                'mother_name' => 'Ibu ' . $lastName,
+                'guardian_name' => 'Wali ' . $lastName,
                 'guardian_phone' => '0812345600' . str_pad((string) $i, 2, '0', STR_PAD_LEFT),
             ]);
         }
