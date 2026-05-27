@@ -30,6 +30,14 @@ Route::middleware('auth')->group(function () {
         return redirect()->route('dashboard');
     })->name('guardian.dashboard');
 
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::resource('levels', App\Http\Controllers\Admin\LevelController::class);
+        Route::resource('school-classes', App\Http\Controllers\Admin\SchoolClassController::class);
+        Route::resource('subjects', App\Http\Controllers\Admin\SubjectController::class);
+        Route::resource('academic-years', App\Http\Controllers\Admin\AcademicYearController::class);
+        Route::resource('semesters', App\Http\Controllers\Admin\SemesterController::class);
+    });
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

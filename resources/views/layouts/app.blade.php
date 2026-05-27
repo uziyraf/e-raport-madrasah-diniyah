@@ -26,14 +26,16 @@
         @include('partials.topbar')
 
         <!-- Main Content -->
-        <main class="min-h-screen bg-slate-50 px-4 pb-6 pt-20 xl:pl-72 xl:pr-6">
-            @isset($header)
-                <header class="mb-6">
-                    {{ $header }}
-                </header>
-            @endisset
+        <main class="min-h-screen bg-slate-50 pt-16 xl:ml-72">
+            <div class="px-4 py-6 sm:px-6 lg:px-8">
+                @isset($header)
+                    <header class="mb-6">
+                        {{ $header }}
+                    </header>
+                @endisset
 
-            {{ $slot }}
+                {{ $slot }}
+            </div>
         </main>
     </div>
 </body>

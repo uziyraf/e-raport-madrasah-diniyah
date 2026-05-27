@@ -25,7 +25,7 @@ return [
         'data_wali_santri' => ['label' => 'Data Wali Santri', 'route' => 'super_admin.guardians.index', 'icon' => 'bx bx-user-voice'],
         'jenjang_kelas' => ['label' => 'Jenjang dan Kelas', 'route' => 'super_admin.grades.index', 'icon' => 'bx bx-building'],
         'fan_mapel' => ['label' => 'Fan/Mapel', 'route' => 'super_admin.subjects.index', 'icon' => 'bx bx-book-open'],
-        'tahun_ajaran_semester' => ['label' => 'Tahun Ajaran dan Semester', 'route' => 'super_admin.academic_years.index', 'icon' => 'bx bx-calendar'], // Consolidated
+        'tahun_ajaran_semester' => ['label' => 'Tahun Ajaran dan Semester', 'route' => 'admin.academic-years.index', 'icon' => 'bx bx-calendar'], // Consolidated
         'wali_kelas' => ['label' => 'Wali Kelas', 'route' => 'super_admin.homerooms.index', 'icon' => 'bx bx-chalkboard'],
         'guru_fan_mapel' => ['label' => 'Guru Fan/Mapel', 'route' => 'super_admin.teacher_subjects.index', 'icon' => 'bx bx-chalkboard'], // Renamed label and key
         'jadwal_pelajaran' => ['label' => 'Jadwal Pelajaran', 'route' => 'super_admin.schedules.index', 'icon' => 'bx bx-time'],
@@ -43,7 +43,7 @@ return [
         'data_wali_santri' => ['label' => 'Data Wali Santri', 'route' => 'kepala_sekolah.guardians.index', 'icon' => 'bx bx-user-voice'], // Added Wali Santri for principal
         'jenjang_kelas' => ['label' => 'Jenjang dan Kelas', 'route' => 'kepala_sekolah.grades.index', 'icon' => 'bx bx-building'], // Renamed label
         'fan_mapel' => ['label' => 'Fan/Mapel', 'route' => 'kepala_sekolah.subjects.index', 'icon' => 'bx bx-book-open'],
-        'tahun_ajaran_semester' => ['label' => 'Tahun Ajaran dan Semester', 'route' => 'kepala_sekolah.academic_years.index', 'icon' => 'bx bx-calendar'], // Consolidated
+        'tahun_ajaran_semester' => ['label' => 'Tahun Ajaran dan Semester', 'route' => 'admin.academic-years.index', 'icon' => 'bx bx-calendar'], // Consolidated
         'wali_kelas' => ['label' => 'Wali Kelas', 'route' => 'kepala_sekolah.homerooms.index', 'icon' => 'bx bx-chalkboard'],
         'guru_fan_mapel' => ['label' => 'Guru Fan/Mapel', 'route' => 'kepala_sekolah.teacher_subjects.index', 'icon' => 'bx bx-chalkboard'], // Renamed label and key
         'jadwal_pelajaran' => ['label' => 'Jadwal Pelajaran', 'route' => 'kepala_sekolah.schedules.index', 'icon' => 'bx bx-time'],
