@@ -28,22 +28,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        $user = $request->user();
-
-        if ($user->hasRole('super_admin')) {
-            return redirect()->route('admin.dashboard');
-        } elseif ($user->hasRole('kepala_sekolah')) {
-            return redirect()->route('principal.dashboard');
-        } elseif ($user->hasRole('wali_kelas')) {
-            return redirect()->route('homeroom.dashboard');
-        } elseif ($user->hasRole('guru_fan')) {
-            return redirect()->route('teacher.dashboard');
-        } elseif ($user->hasRole('wali_santri')) {
-            return redirect()->route('guardian.dashboard');
-        } else {
-            // Default redirect if no role matches (e.g., to a general dashboard or login page)
-            return redirect()->route('dashboard'); // Fallback to the default dashboard
-        }
+        return redirect()->intended(route('dashboard'));
     }
 
     /**
