@@ -13,6 +13,15 @@ export default {
         extend: {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                serif: ['"Liberation Serif"', 'Georgia', '"Times New Roman"', 'serif'],
+                arabic: ['"Noto Naskh Arabic"', '"Amiri"', 'serif'],
+            },
+            colors: {
+                brand: {
+                    primary: '#042f2e',
+                    active: '#064e3b',
+                    accent: '#fdba74',
+                },
             },
         },
     },
