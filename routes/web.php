@@ -43,6 +43,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/{teachingAssignment}', [App\Http\Controllers\Homeroom\GradeMonitoringController::class, 'show'])->name('show');
     });
 
+    Route::prefix('wali-kelas/sikap')->name('homeroom.attitudes.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Homeroom\AttitudeController::class, 'index'])->name('index');
+        Route::get('/{student}/edit', [App\Http\Controllers\Homeroom\AttitudeController::class, 'edit'])->name('edit');
+        Route::put('/{student}', [App\Http\Controllers\Homeroom\AttitudeController::class, 'update'])->name('update');
+    });
+
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('levels', App\Http\Controllers\Admin\LevelController::class);
         Route::resource('school-classes', App\Http\Controllers\Admin\SchoolClassController::class);
