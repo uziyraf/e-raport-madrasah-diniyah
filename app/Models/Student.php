@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\AttendanceDetail;
 
 class Student extends Model
 {
@@ -48,5 +49,10 @@ class Student extends Model
         return $this->hasOne(StudentClassEnrollment::class)
             ->where('is_active', true)
             ->with('schoolClass.level', 'academicYear', 'semester');
+    }
+
+    public function attendanceDetails(): HasMany
+    {
+        return $this->hasMany(AttendanceDetail::class);
     }
 }
