@@ -47,6 +47,10 @@
                     <p class="mt-1 text-base text-zinc-900">{{ $journal->student?->name ?? '-' }}</p>
                 </div>
                 <div>
+                    <p class="text-xs font-semibold uppercase text-neutral-500">NIS</p>
+                    <p class="mt-1 text-base text-zinc-900">{{ $journal->student?->nis ?? '-' }}</p>
+                </div>
+                <div>
                     <p class="text-xs font-semibold uppercase text-neutral-500">Tahun Ajaran</p>
                     <p class="mt-1 text-base text-zinc-900">{{ $journal->academicYear->name }}</p>
                 </div>
@@ -98,7 +102,7 @@
         @endif
 
         <div>
-            <a href="{{ route('admin.journals.index') }}"
+            <a href="{{ url()->previous() }}"
                class="inline-flex items-center justify-center rounded-sm bg-slate-50 px-4 py-3 text-sm font-medium text-slate-600 outline outline-1 outline-neutral-500 transition hover:bg-slate-100">
                 Kembali
             </a>

@@ -107,8 +107,13 @@ Route::middleware('auth')->group(function () {
         Route::resource('homeroom-assignments', App\Http\Controllers\Admin\HomeroomAssignmentController::class);
         Route::resource('teaching-assignments', App\Http\Controllers\Admin\TeachingAssignmentController::class);
         Route::get('grades', [App\Http\Controllers\Admin\GradeMonitoringController::class, 'index'])->name('grades.index');
-        Route::get('journals', [App\Http\Controllers\Admin\JournalMonitoringController::class, 'index'])->name('journals.index');
-        Route::get('journals/{teacherJournal}', [App\Http\Controllers\Admin\JournalMonitoringController::class, 'show'])->name('journals.show');
+        Route::prefix('journals')->name('journals.')->group(function () {
+            Route::get('/', [App\Http\Controllers\Admin\JournalMonitoringController::class, 'index'])->name('index');
+            Route::get('/kelas/{schoolClass}', [App\Http\Controllers\Admin\JournalMonitoringController::class, 'classDetail'])->name('class');
+            Route::get('/kelas/{schoolClass}/{journalType}', [App\Http\Controllers\Admin\JournalMonitoringController::class, 'typeStudents'])->name('type');
+            Route::get('/kelas/{schoolClass}/{journalType}/{student}', [App\Http\Controllers\Admin\JournalMonitoringController::class, 'studentHistory'])->name('student');
+            Route::get('/{teacherJournal}', [App\Http\Controllers\Admin\JournalMonitoringController::class, 'show'])->name('show')->whereNumber('teacherJournal');
+        });
         Route::prefix('absensi')->name('attendances.')->group(function () {
             Route::get('/', [App\Http\Controllers\Admin\AttendanceMonitoringController::class, 'index'])->name('index');
             Route::get('/kelas/{schoolClass}', [App\Http\Controllers\Admin\AttendanceMonitoringController::class, 'classDetail'])->name('class');
