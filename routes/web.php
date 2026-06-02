@@ -65,6 +65,11 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{attendanceSession}', [App\Http\Controllers\Teacher\AttendanceController::class, 'destroy'])->name('destroy');
     });
 
+    Route::prefix('wali-kelas/raport')->name('homeroom.report-cards.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Homeroom\ReportCardController::class, 'index'])->name('index');
+        Route::get('/{student}', [App\Http\Controllers\Homeroom\ReportCardController::class, 'show'])->name('show');
+    });
+
     Route::prefix('wali-kelas/sikap')->name('homeroom.attitudes.')->group(function () {
         Route::get('/', [App\Http\Controllers\Homeroom\AttitudeController::class, 'index'])->name('index');
         Route::get('/{student}/edit', [App\Http\Controllers\Homeroom\AttitudeController::class, 'edit'])->name('edit');
@@ -113,6 +118,10 @@ Route::middleware('auth')->group(function () {
             Route::get('/kelas/{schoolClass}/{journalType}', [App\Http\Controllers\Admin\JournalMonitoringController::class, 'typeStudents'])->name('type');
             Route::get('/kelas/{schoolClass}/{journalType}/{student}', [App\Http\Controllers\Admin\JournalMonitoringController::class, 'studentHistory'])->name('student');
             Route::get('/{teacherJournal}', [App\Http\Controllers\Admin\JournalMonitoringController::class, 'show'])->name('show')->whereNumber('teacherJournal');
+        });
+        Route::prefix('raport')->name('report-cards.')->group(function () {
+            Route::get('/', [App\Http\Controllers\Admin\ReportCardController::class, 'index'])->name('index');
+            Route::get('/{student}', [App\Http\Controllers\Admin\ReportCardController::class, 'show'])->name('show');
         });
         Route::prefix('absensi')->name('attendances.')->group(function () {
             Route::get('/', [App\Http\Controllers\Admin\AttendanceMonitoringController::class, 'index'])->name('index');

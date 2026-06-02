@@ -20,6 +20,7 @@ class UpdateTeacherRequest extends FormRequest
         $rules = [
             'teacher_code' => ['nullable', 'string', 'max:50', Rule::unique('teachers', 'teacher_code')->ignore($teacherId)],
             'name' => ['required', 'string', 'max:255'],
+            'arabic_name' => ['nullable', 'string', 'max:255'],
             'gender' => ['nullable', 'string', 'in:male,female'],
             'birth_place' => ['nullable', 'string', 'max:100'],
             'birth_date' => ['nullable', 'date'],

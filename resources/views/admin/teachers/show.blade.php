@@ -12,6 +12,12 @@
                     <dt class="text-xs font-semibold uppercase text-neutral-500">Nama Guru</dt>
                     <dd class="mt-1 text-base font-normal text-zinc-900">{{ $teacher->name }}</dd>
                 </div>
+                @if ($teacher->arabic_name)
+                <div>
+                    <dt class="text-xs font-semibold uppercase text-neutral-500">Nama Arab</dt>
+                    <dd class="mt-1 text-base font-normal text-zinc-900" lang="ar" dir="rtl" class="font-arabic leading-loose">{{ $teacher->arabic_name }}</dd>
+                </div>
+                @endif
                 <div>
                     <dt class="text-xs font-semibold uppercase text-neutral-500">Kode Guru</dt>
                     <dd class="mt-1 text-base font-normal text-zinc-900">{{ $teacher->teacher_code ?? '-' }}</dd>
