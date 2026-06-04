@@ -6,7 +6,7 @@ return [
         'data_user' => ['label' => 'Data User', 'route' => 'super_admin.users.index', 'icon' => 'bx bx-user'],
         'data_guru' => ['label' => 'Data Guru', 'route' => 'admin.teachers.index', 'icon' => 'bx bx-user'],
         'data_santri' => ['label' => 'Data Santri', 'route' => 'admin.students.index', 'icon' => 'bx bxs-user-rectangle'],
-        'data_wali_santri' => ['label' => 'Data Wali Santri', 'route' => 'super_admin.guardians.index', 'icon' => 'bx bx-user-voice'],
+        'data_wali_santri' => ['label' => 'Data Wali Santri', 'route' => 'admin.guardians.index', 'icon' => 'bx bx-user-voice'],
         'jenjang_kelas' => ['label' => 'Jenjang', 'route' => 'admin.levels.index', 'icon' => 'bx bx-building'],
         'kelas' => ['label' => 'Kelas', 'route' => 'admin.school-classes.index', 'icon' => 'bx bx-layer'],
         'fan_mapel' => ['label' => 'Fan/Mapel', 'route' => 'admin.subjects.index', 'icon' => 'bx bx-book-open'],
@@ -29,7 +29,7 @@ return [
         'data_user' => ['label' => 'Data User', 'route' => 'kepala_sekolah.users.index', 'icon' => 'bx bx-user'],
         'data_guru' => ['label' => 'Data Guru', 'route' => 'admin.teachers.index', 'icon' => 'bx bx-user'],
         'data_santri' => ['label' => 'Data Santri', 'route' => 'admin.students.index', 'icon' => 'bx bxs-user-rectangle'],
-        'data_wali_santri' => ['label' => 'Data Wali Santri', 'route' => 'kepala_sekolah.guardians.index', 'icon' => 'bx bx-user-voice'],
+        'data_wali_santri' => ['label' => 'Data Wali Santri', 'route' => 'admin.guardians.index', 'icon' => 'bx bx-user-voice'],
         'jenjang_kelas' => ['label' => 'Jenjang', 'route' => 'admin.levels.index', 'icon' => 'bx bx-building'],
         'kelas' => ['label' => 'Kelas', 'route' => 'admin.school-classes.index', 'icon' => 'bx bx-layer'],
         'fan_mapel' => ['label' => 'Fan/Mapel', 'route' => 'admin.subjects.index', 'icon' => 'bx bx-book-open'],
@@ -76,8 +76,8 @@ return [
 
     'wali_santri' => [
         'dashboard' => ['label' => 'Dashboard Wali Santri', 'route' => 'dashboard', 'icon' => 'bx bx-home-circle'],
-        'data_santri' => ['label' => 'Data Santri', 'route' => 'wali_santri.students.index', 'icon' => 'bx bxs-user-rectangle'],
-        'absensi_santri' => ['label' => 'Absensi Santri', 'route' => 'wali_santri.attendances.index', 'icon' => 'bx bx-list-ul'],
+        'data_santri' => ['label' => 'Data Santri', 'route' => 'guardian.students.index', 'icon' => 'bx bxs-user-rectangle'],
+        'absensi_santri' => ['label' => 'Absensi Santri', 'route' => 'guardian.attendances.index', 'icon' => 'bx bx-list-ul'],
         'raport_santri' => ['label' => 'Raport Santri', 'route' => 'wali_santri.reports.index', 'icon' => 'bx bx-file'],
         'download_raport' => ['label' => 'Download Raport', 'route' => 'wali_santri.downloads.index', 'icon' => 'bx bx-download'],
         'profil' => ['label' => 'Profil', 'route' => 'profile.edit', 'icon' => 'bx bx-user-circle'],

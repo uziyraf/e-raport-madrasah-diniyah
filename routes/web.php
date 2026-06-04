@@ -130,6 +130,13 @@ Route::middleware('auth')->group(function () {
             Route::get('/kelas/{schoolClass}/teaching/{teachingAssignment}', [App\Http\Controllers\Admin\AttendanceMonitoringController::class, 'teaching'])->name('teaching');
             Route::get('/kelas/{schoolClass}/student/{student}', [App\Http\Controllers\Admin\AttendanceMonitoringController::class, 'student'])->name('student');
         });
+        Route::resource('guardians', App\Http\Controllers\Admin\GuardianController::class);
+    });
+
+    Route::prefix('wali-santri')->name('guardian.')->middleware('role:wali_santri')->group(function () {
+        Route::get('/santri', [App\Http\Controllers\Guardian\StudentController::class, 'index'])->name('students.index');
+        Route::get('/santri/{student}', [App\Http\Controllers\Guardian\StudentController::class, 'show'])->name('students.show');
+        Route::get('/absensi', [App\Http\Controllers\Guardian\AttendanceController::class, 'index'])->name('attendances.index');
     });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

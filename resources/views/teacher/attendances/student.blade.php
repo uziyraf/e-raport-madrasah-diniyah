@@ -25,54 +25,79 @@
             </div>
         </div>
 
-        @if ($attendances->isEmpty())
-            <div class="rounded-lg bg-white p-6 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] outline outline-1 outline-offset-[-1px] outline-stone-300">
-                <p class="text-center text-sm text-neutral-500">Belum ada riwayat absensi untuk santri ini.</p>
-            </div>
-        @else
-            <div class="overflow-hidden rounded-lg bg-white outline outline-1 outline-offset-[-1px] outline-stone-300">
-                <table class="min-w-full divide-y divide-stone-300">
-                    <thead>
-                        <tr>
-                            <th class="border-b border-stone-300 bg-white px-4 py-4 text-left text-sm font-medium text-neutral-700">Tanggal</th>
-                            <th class="border-b border-stone-300 bg-white px-4 py-4 text-left text-sm font-medium text-neutral-700">Tipe</th>
-                            <th class="border-b border-stone-300 bg-white px-4 py-4 text-left text-sm font-medium text-neutral-700">Fan/Mapel</th>
-                            <th class="border-b border-stone-300 bg-white px-4 py-4 text-left text-sm font-medium text-neutral-700">Status</th>
-                            <th class="border-b border-stone-300 bg-white px-4 py-4 text-left text-sm font-medium text-neutral-700">Keterangan</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-stone-300">
-                        @foreach ($attendances as $attendance)
-                            @php $detail = $attendance->details->first(); @endphp
-                            <tr>
-                                <td class="border-t border-stone-300 px-4 py-3 text-base text-zinc-900">{{ $attendance->attendance_date->format('d/m/Y') }}</td>
-                                <td class="border-t border-stone-300 px-4 py-3 text-base text-zinc-900">Mengajar</td>
-                                <td class="border-t border-stone-300 px-4 py-3 text-base text-zinc-900">{{ $attendance->teachingAssignment?->subject->name ?? '-' }}</td>
-                                <td class="border-t border-stone-300 px-4 py-3">
-                                    @if ($detail)
-                                        @if ($detail->status === 'present')
-                                            <span class="inline-flex rounded-full bg-emerald-200 px-3 py-1 text-xs font-semibold text-green-950">{{ $statusLabels['present'] }}</span>
-                                        @elseif ($detail->status === 'permission')
-                                            <span class="inline-flex rounded-full bg-orange-300 px-3 py-1 text-xs font-semibold text-orange-950">{{ $statusLabels['permission'] }}</span>
-                                        @elseif ($detail->status === 'sick')
-                                            <span class="inline-flex rounded-full bg-orange-300 px-3 py-1 text-xs font-semibold text-orange-950">{{ $statusLabels['sick'] }}</span>
-                                        @else
-                                            <span class="inline-flex rounded-full bg-red-200 px-3 py-1 text-xs font-semibold text-red-950">{{ $statusLabels['absent'] }}</span>
-                                        @endif
-                                    @else
-                                        <span class="text-neutral-400">-</span>
-                                    @endif
-                                </td>
-                                <td class="border-t border-stone-300 px-4 py-3 text-base text-zinc-900">{{ $detail?->note ?? '-' }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+        @if ($viewMode === 'calendar')
+            <div class="flex items-center justify-end">
+                <a href="{{ url()->current() . '?' . http_build_query(request()->except(['view', 'month', 'year', 'page'])) }}"
+                   class="inline-flex items-center justify-center rounded-sm bg-slate-50 px-3 py-2 text-sm font-medium text-slate-600 outline outline-1 outline-neutral-500 transition hover:bg-slate-100">
+                    &larr; Lihat Riwayat
+                </a>
             </div>
 
-            <div class="mt-4">
-                {{ $attendances->withQueryString()->links() }}
+            @include('partials.attendance-calendar', [
+                'attendanceDetails' => $attendanceDetails,
+                'month' => $month,
+                'year' => $year,
+            ])
+        @else
+            <div class="flex items-center justify-end">
+                @php
+                    $calendarUrl = url()->current() . '?' . http_build_query(array_merge(request()->except(['view', 'page']), ['view' => 'calendar', 'month' => now()->month, 'year' => now()->year]));
+                @endphp
+                <a href="{{ $calendarUrl }}"
+                   class="inline-flex items-center justify-center rounded-sm bg-teal-950 px-3 py-2 text-sm font-medium text-white transition hover:bg-teal-900">
+                    Lihat Kalender
+                </a>
             </div>
+
+            @if ($attendances->isEmpty())
+                <div class="rounded-lg bg-white p-6 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] outline outline-1 outline-offset-[-1px] outline-stone-300">
+                    <p class="text-center text-sm text-neutral-500">Belum ada riwayat absensi untuk santri ini.</p>
+                </div>
+            @else
+                <div class="overflow-hidden rounded-lg bg-white outline outline-1 outline-offset-[-1px] outline-stone-300">
+                    <table class="min-w-full divide-y divide-stone-300">
+                        <thead>
+                            <tr>
+                                <th class="border-b border-stone-300 bg-white px-4 py-4 text-left text-sm font-medium text-neutral-700">Tanggal</th>
+                                <th class="border-b border-stone-300 bg-white px-4 py-4 text-left text-sm font-medium text-neutral-700">Tipe</th>
+                                <th class="border-b border-stone-300 bg-white px-4 py-4 text-left text-sm font-medium text-neutral-700">Fan/Mapel</th>
+                                <th class="border-b border-stone-300 bg-white px-4 py-4 text-left text-sm font-medium text-neutral-700">Status</th>
+                                <th class="border-b border-stone-300 bg-white px-4 py-4 text-left text-sm font-medium text-neutral-700">Keterangan</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-stone-300">
+                            @foreach ($attendances as $attendance)
+                                @php $detail = $attendance->details->first(); @endphp
+                                <tr>
+                                    <td class="border-t border-stone-300 px-4 py-3 text-base text-zinc-900">{{ $attendance->attendance_date->format('d/m/Y') }}</td>
+                                    <td class="border-t border-stone-300 px-4 py-3 text-base text-zinc-900">Mengajar</td>
+                                    <td class="border-t border-stone-300 px-4 py-3 text-base text-zinc-900">{{ $attendance->teachingAssignment?->subject->name ?? '-' }}</td>
+                                    <td class="border-t border-stone-300 px-4 py-3">
+                                        @if ($detail)
+                                            @if ($detail->status === 'present')
+                                                <span class="inline-flex rounded-full bg-emerald-200 px-3 py-1 text-xs font-semibold text-green-950">{{ $statusLabels['present'] }}</span>
+                                            @elseif ($detail->status === 'permission')
+                                                <span class="inline-flex rounded-full bg-orange-300 px-3 py-1 text-xs font-semibold text-orange-950">{{ $statusLabels['permission'] }}</span>
+                                            @elseif ($detail->status === 'sick')
+                                                <span class="inline-flex rounded-full bg-orange-300 px-3 py-1 text-xs font-semibold text-orange-950">{{ $statusLabels['sick'] }}</span>
+                                            @else
+                                                <span class="inline-flex rounded-full bg-red-200 px-3 py-1 text-xs font-semibold text-red-950">{{ $statusLabels['absent'] }}</span>
+                                            @endif
+                                        @else
+                                            <span class="text-neutral-400">-</span>
+                                        @endif
+                                    </td>
+                                    <td class="border-t border-stone-300 px-4 py-3 text-base text-zinc-900">{{ $detail?->note ?? '-' }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-4">
+                    {{ $attendances->withQueryString()->links() }}
+                </div>
+            @endif
         @endif
 
         <div class="flex items-center gap-3">

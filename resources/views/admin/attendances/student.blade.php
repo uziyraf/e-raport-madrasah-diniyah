@@ -22,63 +22,88 @@
             </div>
         </div>
 
-        <div class="overflow-hidden rounded-lg bg-white outline outline-1 outline-offset-[-1px] outline-stone-300">
-            <table class="min-w-full divide-y divide-stone-300">
-                <thead>
-                    <tr>
-                        <th class="border-b border-stone-300 bg-white px-4 py-4 text-left text-sm font-medium text-neutral-700">No</th>
-                        <th class="border-b border-stone-300 bg-white px-4 py-4 text-left text-sm font-medium text-neutral-700">Tanggal</th>
-                        <th class="border-b border-stone-300 bg-white px-4 py-4 text-left text-sm font-medium text-neutral-700">Tipe</th>
-                        <th class="border-b border-stone-300 bg-white px-4 py-4 text-left text-sm font-medium text-neutral-700">Fan/Mapel</th>
-                        <th class="border-b border-stone-300 bg-white px-4 py-4 text-left text-sm font-medium text-neutral-700">Guru</th>
-                        <th class="border-b border-stone-300 bg-white px-4 py-4 text-left text-sm font-medium text-neutral-700">Status</th>
-                        <th class="border-b border-stone-300 bg-white px-4 py-4 text-left text-sm font-medium text-neutral-700">Keterangan</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-stone-300">
-                    @forelse ($attendances as $index => $session)
-                        @php
-                            $detail = $session->details->first();
-                        @endphp
-                        <tr>
-                            <td class="border-t border-stone-300 px-4 py-3 text-base text-zinc-900">{{ $attendances->firstItem() + $index }}</td>
-                            <td class="border-t border-stone-300 px-4 py-3 text-base text-zinc-900">{{ $session->attendance_date->format('d/m/Y') }}</td>
-                            <td class="border-t border-stone-300 px-4 py-3 text-base text-zinc-900">{{ $attendanceTypes[$session->attendance_type] ?? $session->attendance_type }}</td>
-                            <td class="border-t border-stone-300 px-4 py-3 text-base text-zinc-900">
-                                {{ $session->teachingAssignment?->subject->name ?? '-' }}
-                            </td>
-                            <td class="border-t border-stone-300 px-4 py-3 text-base text-zinc-900">{{ $session->teacher?->name ?? '-' }}</td>
-                            <td class="border-t border-stone-300 px-4 py-3">
-                                @php
-                                    $statusClass = match ($detail?->status) {
-                                        'present' => 'bg-emerald-200 text-green-950',
-                                        'permission' => 'bg-orange-300 text-orange-950',
-                                        'sick' => 'bg-amber-200 text-amber-950',
-                                        'absent' => 'bg-red-200 text-red-950',
-                                        default => 'bg-zinc-200 text-neutral-700',
-                                    };
-                                @endphp
-                                @if ($detail)
-                                    <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold {{ $statusClass }}">
-                                        {{ $statusLabels[$detail->status] ?? $detail->status }}
-                                    </span>
-                                @else
-                                    <span class="inline-flex rounded-full bg-zinc-200 px-3 py-1 text-xs font-semibold text-neutral-700">-</span>
-                                @endif
-                            </td>
-                            <td class="border-t border-stone-300 px-4 py-3 text-base text-zinc-900">{{ $detail?->note ?? '-' }}</td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="7" class="px-6 py-10 text-center text-sm text-neutral-500">Belum ada riwayat absensi untuk santri ini.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+        @if ($viewMode === 'calendar')
+            <div class="flex items-center justify-end">
+                <a href="{{ url()->current() . '?' . http_build_query(request()->except(['view', 'month', 'year', 'page'])) }}"
+                   class="inline-flex items-center justify-center rounded-sm bg-slate-50 px-3 py-2 text-sm font-medium text-slate-600 outline outline-1 outline-neutral-500 transition hover:bg-slate-100">
+                    &larr; Lihat Riwayat
+                </a>
+            </div>
 
-        <div class="mt-4">
-            {{ $attendances->links() }}
-        </div>
+            @include('partials.attendance-calendar', [
+                'attendanceDetails' => $attendanceDetails,
+                'month' => $month,
+                'year' => $year,
+            ])
+        @else
+            <div class="flex items-center justify-end">
+                @php
+                    $calendarUrl = url()->current() . '?' . http_build_query(array_merge(request()->except(['view', 'page']), ['view' => 'calendar', 'month' => now()->month, 'year' => now()->year]));
+                @endphp
+                <a href="{{ $calendarUrl }}"
+                   class="inline-flex items-center justify-center rounded-sm bg-teal-950 px-3 py-2 text-sm font-medium text-white transition hover:bg-teal-900">
+                    Lihat Kalender
+                </a>
+            </div>
+
+            <div class="overflow-hidden rounded-lg bg-white outline outline-1 outline-offset-[-1px] outline-stone-300">
+                <table class="min-w-full divide-y divide-stone-300">
+                    <thead>
+                        <tr>
+                            <th class="border-b border-stone-300 bg-white px-4 py-4 text-left text-sm font-medium text-neutral-700">No</th>
+                            <th class="border-b border-stone-300 bg-white px-4 py-4 text-left text-sm font-medium text-neutral-700">Tanggal</th>
+                            <th class="border-b border-stone-300 bg-white px-4 py-4 text-left text-sm font-medium text-neutral-700">Tipe</th>
+                            <th class="border-b border-stone-300 bg-white px-4 py-4 text-left text-sm font-medium text-neutral-700">Fan/Mapel</th>
+                            <th class="border-b border-stone-300 bg-white px-4 py-4 text-left text-sm font-medium text-neutral-700">Guru</th>
+                            <th class="border-b border-stone-300 bg-white px-4 py-4 text-left text-sm font-medium text-neutral-700">Status</th>
+                            <th class="border-b border-stone-300 bg-white px-4 py-4 text-left text-sm font-medium text-neutral-700">Keterangan</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-stone-300">
+                        @forelse ($attendances as $index => $session)
+                            @php
+                                $detail = $session->details->first();
+                            @endphp
+                            <tr>
+                                <td class="border-t border-stone-300 px-4 py-3 text-base text-zinc-900">{{ $attendances->firstItem() + $index }}</td>
+                                <td class="border-t border-stone-300 px-4 py-3 text-base text-zinc-900">{{ $session->attendance_date->format('d/m/Y') }}</td>
+                                <td class="border-t border-stone-300 px-4 py-3 text-base text-zinc-900">{{ $attendanceTypes[$session->attendance_type] ?? $session->attendance_type }}</td>
+                                <td class="border-t border-stone-300 px-4 py-3 text-base text-zinc-900">
+                                    {{ $session->teachingAssignment?->subject->name ?? '-' }}
+                                </td>
+                                <td class="border-t border-stone-300 px-4 py-3 text-base text-zinc-900">{{ $session->teacher?->name ?? '-' }}</td>
+                                <td class="border-t border-stone-300 px-4 py-3">
+                                    @php
+                                        $statusClass = match ($detail?->status) {
+                                            'present' => 'bg-emerald-200 text-green-950',
+                                            'permission' => 'bg-orange-300 text-orange-950',
+                                            'sick' => 'bg-amber-200 text-amber-950',
+                                            'absent' => 'bg-red-200 text-red-950',
+                                            default => 'bg-zinc-200 text-neutral-700',
+                                        };
+                                    @endphp
+                                    @if ($detail)
+                                        <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold {{ $statusClass }}">
+                                            {{ $statusLabels[$detail->status] ?? $detail->status }}
+                                        </span>
+                                    @else
+                                        <span class="inline-flex rounded-full bg-zinc-200 px-3 py-1 text-xs font-semibold text-neutral-700">-</span>
+                                    @endif
+                                </td>
+                                <td class="border-t border-stone-300 px-4 py-3 text-base text-zinc-900">{{ $detail?->note ?? '-' }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7" class="px-6 py-10 text-center text-sm text-neutral-500">Belum ada riwayat absensi untuk santri ini.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-4">
+                {{ $attendances->links() }}
+            </div>
+        @endif
     </div>
 </x-app-layout>
