@@ -26,9 +26,8 @@ Route::middleware('auth')->group(function () {
         return redirect()->route('dashboard');
     })->name('teacher.dashboard');
 
-    Route::get('/wali-santri/dashboard', function () {
-        return redirect()->route('dashboard');
-    })->name('guardian.dashboard');
+    Route::get('/wali-santri/dashboard', [App\Http\Controllers\Guardian\DashboardController::class, 'index'])
+        ->name('guardian.dashboard');
 
     Route::prefix('guru/nilai')->name('teacher.grades.')->group(function () {
         Route::get('/', [App\Http\Controllers\Teacher\GradeController::class, 'index'])->name('index');

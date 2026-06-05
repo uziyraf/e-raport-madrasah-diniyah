@@ -75,7 +75,7 @@ return [
     ],
 
     'wali_santri' => [
-        'dashboard' => ['label' => 'Dashboard Wali Santri', 'route' => 'dashboard', 'icon' => 'bx bx-home-circle'],
+        'dashboard' => ['label' => 'Dashboard Wali Santri', 'route' => 'guardian.dashboard', 'icon' => 'bx bx-home-circle'],
         'data_santri' => ['label' => 'Data Santri', 'route' => 'guardian.students.index', 'icon' => 'bx bxs-user-rectangle'],
         'absensi_santri' => ['label' => 'Absensi Santri', 'route' => 'guardian.attendances.index', 'icon' => 'bx bx-list-ul'],
         'raport_santri' => ['label' => 'Raport Santri', 'route' => 'wali_santri.reports.index', 'icon' => 'bx bx-file'],
