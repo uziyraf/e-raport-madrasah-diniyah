@@ -64,6 +64,22 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{attendanceSession}', [App\Http\Controllers\Teacher\AttendanceController::class, 'destroy'])->name('destroy');
     });
 
+    Route::prefix('guru/exports')->name('teacher.exports.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Teacher\ExportController::class, 'index'])->name('index');
+        Route::get('/attendances', [App\Http\Controllers\Teacher\ExportController::class, 'attendances'])->name('attendances');
+        Route::get('/grades', [App\Http\Controllers\Teacher\ExportController::class, 'grades'])->name('grades');
+        Route::get('/journals', [App\Http\Controllers\Teacher\ExportController::class, 'journals'])->name('journals');
+    });
+
+    Route::prefix('wali-kelas/exports')->name('homeroom.exports.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Homeroom\ExportController::class, 'index'])->name('index');
+        Route::get('/students', [App\Http\Controllers\Homeroom\ExportController::class, 'students'])->name('students');
+        Route::get('/attendances', [App\Http\Controllers\Homeroom\ExportController::class, 'attendances'])->name('attendances');
+        Route::get('/grades', [App\Http\Controllers\Homeroom\ExportController::class, 'grades'])->name('grades');
+        Route::get('/attitudes', [App\Http\Controllers\Homeroom\ExportController::class, 'attitudes'])->name('attitudes');
+        Route::get('/journals', [App\Http\Controllers\Homeroom\ExportController::class, 'journals'])->name('journals');
+    });
+
     Route::prefix('wali-kelas/raport')->name('homeroom.report-cards.')->group(function () {
         Route::get('/', [App\Http\Controllers\Homeroom\ReportCardController::class, 'index'])->name('index');
         Route::get('/{student}', [App\Http\Controllers\Homeroom\ReportCardController::class, 'show'])->name('show');
@@ -130,6 +146,16 @@ Route::middleware('auth')->group(function () {
             Route::get('/kelas/{schoolClass}/student/{student}', [App\Http\Controllers\Admin\AttendanceMonitoringController::class, 'student'])->name('student');
         });
         Route::resource('guardians', App\Http\Controllers\Admin\GuardianController::class);
+        Route::prefix('exports')->name('exports.')->group(function () {
+            Route::get('/', [App\Http\Controllers\Admin\ExportController::class, 'index'])->name('index');
+            Route::get('/students', [App\Http\Controllers\Admin\ExportController::class, 'students'])->name('students');
+            Route::get('/teachers', [App\Http\Controllers\Admin\ExportController::class, 'teachers'])->name('teachers');
+            Route::get('/guardians', [App\Http\Controllers\Admin\ExportController::class, 'guardians'])->name('guardians');
+            Route::get('/attendances', [App\Http\Controllers\Admin\ExportController::class, 'attendances'])->name('attendances');
+            Route::get('/grades', [App\Http\Controllers\Admin\ExportController::class, 'grades'])->name('grades');
+            Route::get('/attitudes', [App\Http\Controllers\Admin\ExportController::class, 'attitudes'])->name('attitudes');
+            Route::get('/journals', [App\Http\Controllers\Admin\ExportController::class, 'journals'])->name('journals');
+        });
     });
 
     Route::prefix('wali-santri')->name('guardian.')->middleware('role:wali_santri')->group(function () {
