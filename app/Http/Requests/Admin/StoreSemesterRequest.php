@@ -15,10 +15,19 @@ class StoreSemesterRequest extends FormRequest
     {
         return [
             'academic_year_id' => ['required', 'exists:academic_years,id'],
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'in:Ganjil,Genap'],
             'start_date' => ['required', 'date'],
             'end_date' => ['required', 'date', 'after:start_date'],
             'is_active' => ['boolean'],
         ];
+    }
+
+    public function withValidator($validator)
+    {
+        $validator->addRules([
+            'name' => [
+                'unique:semesters,name,NULL,id,academic_year_id,' . $this->academic_year_id,
+            ],
+        ]);
     }
 }

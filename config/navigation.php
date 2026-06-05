@@ -15,7 +15,7 @@ return [
         'wali_kelas' => ['label' => 'Wali Kelas', 'route' => 'admin.homeroom-assignments.index', 'icon' => 'bx bx-chalkboard'],
         'guru_fan_mapel' => ['label' => 'Guru Fan/Mapel', 'route' => 'admin.teaching-assignments.index', 'icon' => 'bx bx-chalkboard'],
         'jadwal_pelajaran' => ['label' => 'Jadwal Pelajaran', 'route' => 'super_admin.schedules.index', 'icon' => 'bx bx-time'],
-        'kenaikan_penempatan_santri' => ['label' => 'Kenaikan/Penempatan Santri', 'route' => 'super_admin.student_placements.index', 'icon' => 'bx bx-transfer'],
+        'kenaikan_penempatan_santri' => ['label' => 'Kenaikan/Penempatan Santri', 'route' => 'admin.promotions.index', 'icon' => 'bx bx-transfer'],
         'monitoring_nilai' => ['label' => 'Monitoring Nilai', 'route' => 'admin.grades.index', 'icon' => 'bx bx-notepad'],
         'monitoring_jurnal' => ['label' => 'Monitoring Jurnal', 'route' => 'admin.journals.index', 'icon' => 'bx bx-book-content'],
         'monitoring_absensi' => ['label' => 'Monitoring Absensi', 'route' => 'admin.attendances.index', 'icon' => 'bx bx-list-ul'],
