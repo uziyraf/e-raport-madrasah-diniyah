@@ -10,6 +10,166 @@ use Illuminate\Support\Collection;
 
 class StudentPromotionAction
 {
+    public function searchStudents(?int $academicYearId, ?int $semesterId, ?int $classId, ?string $keyword): Collection
+    {
+        $query = Student::with([
+            'activeEnrollment.schoolClass.level',
+            'activeEnrollment.academicYear',
+            'activeEnrollment.semester',
+            'classEnrollments.schoolClass.level',
+            'classEnrollments.academicYear',
+            'classEnrollments.semester',
+        ])->where('status', 'active');
+
+        if ($academicYearId || $semesterId || $classId) {
+            $query->whereHas('classEnrollments', function ($q) use ($academicYearId, $semesterId, $classId) {
+                $q->where('is_active', true);
+                if ($academicYearId) $q->where('academic_year_id', $academicYearId);
+                if ($semesterId) $q->where('semester_id', $semesterId);
+                if ($classId) $q->where('school_class_id', $classId);
+            });
+        }
+
+        if ($keyword) {
+            $query->where(function ($q) use ($keyword) {
+                $q->where('nis', 'like', "%{$keyword}%")
+                  ->orWhere('name', 'like', "%{$keyword}%");
+            });
+        }
+
+        $students = $query->orderBy('name')->get();
+
+        return $students->map(function ($student) {
+            $e = $student->activeEnrollment;
+            return (object) [
+                'student' => $student,
+                'nis' => $student->nis,
+                'student_name' => $student->name,
+                'current_class_label' => $e ? ($e->schoolClass?->level?->name . ' ' . $e->schoolClass?->name) : '-',
+                'current_academic_year' => $e && $e->academicYear ? $e->academicYear->name : '-',
+                'current_semester' => $e && $e->semester ? $e->semester->name : '-',
+                'validation_status' => 'valid',
+                'message' => '',
+                'enrollments' => $student->classEnrollments->map(function ($enr) {
+                    return (object) [
+                        'class' => ($enr->schoolClass?->level?->name ?? '') . ' ' . ($enr->schoolClass?->name ?? '-'),
+                        'academic_year' => $enr->academicYear?->name ?? '-',
+                        'semester' => $enr->semester?->name ?? '-',
+                        'is_active' => $enr->is_active,
+                    ];
+                }),
+            ];
+        });
+    }
+
+    public function searchBulkInput(string $input): Collection
+    {
+        $lines = preg_split('/[\r\n,]+/', $input);
+        $lines = array_map('trim', $lines);
+        $lines = array_filter($lines, fn($v) => $v !== '');
+
+        $items = collect();
+        $seenIds = [];
+
+        foreach ($lines as $line) {
+            $student = Student::where('nis', $line)->first();
+
+            if (!$student) {
+                $student = Student::where('name', $line)->first();
+            }
+
+            if (!$student) {
+                $nameMatches = Student::where('name', 'like', "%{$line}%")->get();
+                if ($nameMatches->count() === 1) {
+                    $student = $nameMatches->first();
+                } elseif ($nameMatches->count() > 1) {
+                    $items->push($this->makeSearchItem(null, $line, $line, '-', 'warning', 'Nama cocok dengan ' . $nameMatches->count() . ' santri. Perlu cek NIS.'));
+                    continue;
+                } else {
+                    $items->push($this->makeSearchItem(null, '-', $line, '-', 'error', 'NIS/Nama tidak ditemukan.'));
+                    continue;
+                }
+            }
+
+            if ($student->status !== 'active') {
+                $items->push($this->makeSearchItem($student, $student->nis, $student->name, $this->currentClassLabel($student), 'error', 'Santri tidak aktif.'));
+                continue;
+            }
+
+            if (in_array($student->id, $seenIds)) {
+                $items->push($this->makeSearchItem($student, $student->nis, $student->name, $this->currentClassLabel($student), 'warning', 'Duplikat dalam input.'));
+                continue;
+            }
+
+            $seenIds[] = $student->id;
+
+            $student->loadMissing('activeEnrollment.schoolClass.level');
+            $items->push($this->makeSearchItem($student, $student->nis, $student->name, $this->currentClassLabel($student), 'valid', 'Ditemukan.'));
+        }
+
+        return $items;
+    }
+
+    public function parseImportForPreview(UploadedFile $file): Collection
+    {
+        $handle = fopen($file->getRealPath(), 'r');
+        $items = collect();
+        $seenIds = [];
+        $lineNum = 0;
+
+        if (!$handle) {
+            return collect();
+        }
+
+        while (($row = fgetcsv($handle, 0, ';')) !== false || ($row = fgetcsv($handle, 0, ',')) !== false) {
+            $lineNum++;
+            if ($lineNum === 1) {
+                continue;
+            }
+
+            $nis = trim($row[0] ?? '');
+            $nameFromFile = trim($row[1] ?? '');
+
+            if (empty($nis) && empty($nameFromFile)) {
+                continue;
+            }
+
+            $student = null;
+
+            if (!empty($nis)) {
+                $student = Student::where('nis', $nis)->first();
+            }
+
+            if (!$student && !empty($nameFromFile)) {
+                $student = Student::where('name', $nameFromFile)->first();
+            }
+
+            if (!$student) {
+                $displayName = $nameFromFile ?: $nis;
+                $items->push($this->makeSearchItem(null, $nis ?: '-', $displayName, '-', 'error', 'NIS/Nama tidak ditemukan.'));
+                continue;
+            }
+
+            if (!empty($nameFromFile) && $student->name !== $nameFromFile) {
+                $items->push($this->makeSearchItem($student, $nis ?: $student->nis, $student->name, $this->currentClassLabel($student), 'warning', 'Nama tidak cocok dengan NIS.'));
+                continue;
+            }
+
+            if (in_array($student->id, $seenIds)) {
+                $items->push($this->makeSearchItem($student, $student->nis, $student->name, $this->currentClassLabel($student), 'warning', 'Duplikat dalam file.'));
+                continue;
+            }
+
+            $seenIds[] = $student->id;
+
+            $student->loadMissing('activeEnrollment.schoolClass.level');
+            $items->push($this->makeSearchItem($student, $student->nis, $student->name, $this->currentClassLabel($student), 'valid', 'Ditemukan.'));
+        }
+
+        fclose($handle);
+        return $items;
+    }
+
     public function resolveFromClass(array $studentIds, ?int $sourceYearId, ?int $sourceSemesterId, ?int $sourceClassId, int $targetYearId, int $targetSemesterId, ?int $targetClassId, string $placementStatus): Collection
     {
         $students = Student::with(['activeEnrollment.schoolClass.level'])
@@ -294,6 +454,18 @@ class StudentPromotionAction
             return '-';
         }
         return ($e->schoolClass?->level?->name ?? '') . ' ' . ($e->schoolClass?->name ?? '-');
+    }
+
+    private function makeSearchItem($student, string $nis, string $name, string $currentClass, string $validationStatus, string $message): object
+    {
+        return (object) [
+            'student' => $student,
+            'nis' => $nis,
+            'student_name' => $name,
+            'current_class_label' => $currentClass,
+            'validation_status' => $validationStatus,
+            'message' => $message,
+        ];
     }
 
     private function makeItem($student, string $nis, string $name, string $currentClass, string $targetClass, string $placementStatus, string $validationStatus, string $message): object

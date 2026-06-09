@@ -158,11 +158,20 @@ Route::middleware('auth')->group(function () {
         });
 
         Route::prefix('promotions')->name('promotions.')->group(function () {
-            Route::get('/', [App\Http\Controllers\Admin\StudentPromotionController::class, 'index'])->name('index');
+            Route::match(['GET', 'POST'], '/', [App\Http\Controllers\Admin\StudentPromotionController::class, 'index'])->name('index');
+            Route::post('/search', [App\Http\Controllers\Admin\StudentPromotionController::class, 'search'])->name('search');
             Route::get('/template', [App\Http\Controllers\Admin\StudentPromotionController::class, 'template'])->name('template');
             Route::post('/preview', [App\Http\Controllers\Admin\StudentPromotionController::class, 'preview'])->name('preview');
             Route::post('/import-preview', [App\Http\Controllers\Admin\StudentPromotionController::class, 'importPreview'])->name('import-preview');
             Route::post('/', [App\Http\Controllers\Admin\StudentPromotionController::class, 'store'])->name('store');
+        });
+
+        Route::prefix('penempatan-santri')->name('placements.')->group(function () {
+            Route::get('/', [App\Http\Controllers\Admin\StudentPlacementController::class, 'index'])->name('index');
+            Route::post('/add-student', [App\Http\Controllers\Admin\StudentPlacementController::class, 'addStudent'])->name('add-student');
+            Route::post('/remove-student', [App\Http\Controllers\Admin\StudentPlacementController::class, 'removeStudent'])->name('remove-student');
+            Route::post('/clear-students', [App\Http\Controllers\Admin\StudentPlacementController::class, 'clearStudents'])->name('clear-students');
+            Route::post('/store', [App\Http\Controllers\Admin\StudentPlacementController::class, 'store'])->name('store');
         });
     });
 

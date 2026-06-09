@@ -15,54 +15,62 @@ use Illuminate\Http\Request;
 
 class StudentPromotionController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, StudentPromotionAction $action)
+    {
+        $data = $this->viewData();
+
+        $data['results'] = null;
+        $data['importItems'] = null;
+        $data['activeTab'] = 'search';
+
+        if ($request->hasFile('import_file') && $request->file('import_file')->isValid()) {
+            $data['importItems'] = $action->parseImportForPreview($request->file('import_file'));
+            $data['activeTab'] = 'import';
+        }
+
+        return view('admin.promotions.index', $data);
+    }
+
+    public function search(Request $request, StudentPromotionAction $action)
+    {
+        $request->validate([
+            'source_academic_year_id' => ['nullable', 'exists:academic_years,id'],
+            'source_semester_id' => ['nullable', 'exists:semesters,id'],
+            'source_school_class_id' => ['nullable', 'exists:school_classes,id'],
+            'keyword' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $hasAny = $request->filled('source_academic_year_id')
+            || $request->filled('source_semester_id')
+            || $request->filled('source_school_class_id')
+            || $request->filled('keyword');
+
+        if (!$hasAny) {
+            return back()->withErrors(['search' => 'Isi minimal salah satu filter pencarian.']);
+        }
+
+        $results = $action->searchStudents(
+            $request->source_academic_year_id,
+            $request->source_semester_id,
+            $request->source_school_class_id,
+            $request->keyword,
+        );
+
+        $data = $this->viewData();
+        $data['results'] = $results;
+        $data['importItems'] = null;
+        $data['activeTab'] = 'search';
+
+        return view('admin.promotions.index', $data);
+    }
+
+    private function viewData(): array
     {
         $years = AcademicYear::orderByDesc('start_date')->get();
         $semesters = Semester::with('academicYear')->orderByDesc('start_date')->get();
         $classes = SchoolClass::active()->with('level')->orderBy('sort_order')->get();
 
-        $students = collect();
-        $sourceYear = null;
-        $sourceSemester = null;
-        $sourceClass = null;
-
-        $hasAnySource = $request->filled('source_academic_year_id')
-            || $request->filled('source_semester_id')
-            || $request->filled('source_school_class_id');
-
-        if ($hasAnySource) {
-            $validated = $request->validate([
-                'source_academic_year_id' => ['required', 'exists:academic_years,id'],
-                'source_semester_id' => ['required', 'exists:semesters,id'],
-                'source_school_class_id' => ['required', 'exists:school_classes,id'],
-            ], [
-                'source_academic_year_id.required' => 'Pilih Tahun Ajaran Asal.',
-                'source_academic_year_id.exists' => 'Tahun Ajaran Asal tidak valid.',
-                'source_semester_id.required' => 'Pilih Semester Asal.',
-                'source_semester_id.exists' => 'Semester Asal tidak valid.',
-                'source_school_class_id.required' => 'Pilih Kelas Asal.',
-                'source_school_class_id.exists' => 'Kelas Asal tidak valid.',
-            ]);
-
-            $sourceYear = AcademicYear::find($validated['source_academic_year_id']);
-            $sourceSemester = Semester::find($validated['source_semester_id']);
-            $sourceClass = SchoolClass::with('level')->find($validated['source_school_class_id']);
-
-            $students = Student::with('activeEnrollment.schoolClass.level')
-                ->whereHas('classEnrollments', fn($q) => $q
-                    ->where('school_class_id', $validated['source_school_class_id'])
-                    ->where('academic_year_id', $validated['source_academic_year_id'])
-                    ->where('semester_id', $validated['source_semester_id'])
-                    ->where('is_active', true)
-                )
-                ->orderBy('name')
-                ->get();
-        }
-
-        return view('admin.promotions.index', compact(
-            'years', 'semesters', 'classes',
-            'students', 'sourceYear', 'sourceSemester', 'sourceClass',
-        ));
+        return compact('years', 'semesters', 'classes');
     }
 
     public function template()
