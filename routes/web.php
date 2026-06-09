@@ -173,7 +173,12 @@ Route::middleware('auth')->group(function () {
             Route::post('/clear-students', [App\Http\Controllers\Admin\StudentPlacementController::class, 'clearStudents'])->name('clear-students');
             Route::post('/store', [App\Http\Controllers\Admin\StudentPlacementController::class, 'store'])->name('store');
         });
+
+        Route::resource('jadwal-pelajaran', App\Http\Controllers\Admin\JadwalPelajaranController::class)->except(['show']);
     });
+
+    Route::get('/jadwal-pelajaran', [App\Http\Controllers\LihatJadwalPelajaranController::class, 'index'])
+        ->name('jadwal-pelajaran.index');
 
     Route::prefix('wali-santri')->name('guardian.')->middleware('role:wali_santri')->group(function () {
         Route::get('/santri', [App\Http\Controllers\Guardian\StudentController::class, 'index'])->name('students.index');
