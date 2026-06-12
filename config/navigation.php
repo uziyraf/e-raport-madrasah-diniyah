@@ -48,7 +48,7 @@ return [
         'data_santri_kelas' => ['label' => 'Data Santri Kelas', 'route' => 'wali_kelas.students.index', 'icon' => 'bx bxs-user-rectangle'],
         'jadwal_kelas' => ['label' => 'Jadwal Kelas', 'route' => 'wali_kelas.schedules.index', 'icon' => 'bx bx-time'],
         'jurnal_guru' => ['label' => 'Jurnal Guru', 'route' => 'wali_kelas.journals.index', 'icon' => 'bx bx-book-content'],
-        'nilai_sikap' => ['label' => 'Nilai Sikap', 'route' => 'wali_kelas.attitudes.index', 'icon' => 'bx bx-notepad'],
+        'nilai_sikap' => ['label' => 'Nilai Sikap', 'route' => 'homeroom.attitudes.index', 'icon' => 'bx bx-notepad'],
         'raport_santri' => ['label' => 'Raport Santri', 'route' => 'wali_kelas.reports.index', 'icon' => 'bx bx-file'],
         'export_rekap' => ['label' => 'Export Rekap', 'route' => 'wali_kelas.exports.index', 'icon' => 'bx bx-download'],
         'profil' => ['label' => 'Profil', 'route' => 'profile.edit', 'icon' => 'bx bx-user-circle'],
