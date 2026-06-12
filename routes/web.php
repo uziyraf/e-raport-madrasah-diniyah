@@ -38,6 +38,9 @@ Route::middleware('auth')->group(function () {
         Route::resource('semesters', App\Http\Controllers\Admin\SemesterController::class);
         Route::resource('teachers', App\Http\Controllers\Admin\TeacherController::class);
         Route::resource('students', App\Http\Controllers\Admin\StudentController::class);
+        Route::resource('student-enrollments', App\Http\Controllers\Admin\StudentEnrollmentController::class);
+        Route::resource('homeroom-assignments', App\Http\Controllers\Admin\HomeroomAssignmentController::class);
+        Route::resource('teaching-assignments', App\Http\Controllers\Admin\TeachingAssignmentController::class);
     });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
