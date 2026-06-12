@@ -22,8 +22,12 @@
 
             <div>
                 <label for="name" class="mb-2 block text-sm font-medium text-neutral-700">Nama Semester</label>
-                <input type="text" name="name" id="name" value="{{ old('name', $semester->name) }}"
-                       class="w-full rounded-sm border border-stone-300 bg-white px-4 py-3 text-sm text-zinc-900 outline-none transition focus:border-teal-950 focus:ring-2 focus:ring-teal-950/10">
+                <select name="name" id="name"
+                        class="w-full rounded-sm border border-stone-300 bg-white px-4 py-3 text-sm text-zinc-900 outline-none transition focus:border-teal-950 focus:ring-2 focus:ring-teal-950/10">
+                    <option value="">Pilih Semester</option>
+                    <option value="Ganjil" {{ old('name', $semester->name) === 'Ganjil' ? 'selected' : '' }}>Ganjil</option>
+                    <option value="Genap" {{ old('name', $semester->name) === 'Genap' ? 'selected' : '' }}>Genap</option>
+                </select>
                 @error('name') <p class="mt-1 text-sm text-red-700">{{ $message }}</p> @enderror
             </div>
 
