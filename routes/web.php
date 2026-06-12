@@ -49,6 +49,30 @@ Route::middleware('auth')->group(function () {
         Route::put('/{student}', [App\Http\Controllers\Homeroom\AttitudeController::class, 'update'])->name('update');
     });
 
+    Route::prefix('guru/jurnal')->name('teacher.journals.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Teacher\JournalController::class, 'index'])->name('index');
+        Route::post('/', [App\Http\Controllers\Teacher\JournalController::class, 'store'])->name('store');
+        Route::get('/{journalType}/santri', [App\Http\Controllers\Teacher\JournalController::class, 'students'])->name('students');
+        Route::get('/{journalType}/santri/{student}/create', [App\Http\Controllers\Teacher\JournalController::class, 'create'])->name('create');
+        Route::get('/{journalType}/santri/{student}', [App\Http\Controllers\Teacher\JournalController::class, 'studentJournal'])->name('student');
+        Route::get('/{teacherJournal}', [App\Http\Controllers\Teacher\JournalController::class, 'show'])->name('show');
+        Route::get('/{teacherJournal}/edit', [App\Http\Controllers\Teacher\JournalController::class, 'edit'])->name('edit');
+        Route::put('/{teacherJournal}', [App\Http\Controllers\Teacher\JournalController::class, 'update'])->name('update');
+        Route::delete('/{teacherJournal}', [App\Http\Controllers\Teacher\JournalController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('wali-kelas/jurnal')->name('homeroom.journals.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Homeroom\JournalController::class, 'index'])->name('index');
+        Route::post('/', [App\Http\Controllers\Homeroom\JournalController::class, 'store'])->name('store');
+        Route::get('/{journalType}/santri', [App\Http\Controllers\Homeroom\JournalController::class, 'students'])->name('students');
+        Route::get('/{journalType}/santri/{student}/create', [App\Http\Controllers\Homeroom\JournalController::class, 'create'])->name('create');
+        Route::get('/{journalType}/santri/{student}', [App\Http\Controllers\Homeroom\JournalController::class, 'studentJournal'])->name('student');
+        Route::get('/{teacherJournal}', [App\Http\Controllers\Homeroom\JournalController::class, 'show'])->name('show');
+        Route::get('/{teacherJournal}/edit', [App\Http\Controllers\Homeroom\JournalController::class, 'edit'])->name('edit');
+        Route::put('/{teacherJournal}', [App\Http\Controllers\Homeroom\JournalController::class, 'update'])->name('update');
+        Route::delete('/{teacherJournal}', [App\Http\Controllers\Homeroom\JournalController::class, 'destroy'])->name('destroy');
+    });
+
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('levels', App\Http\Controllers\Admin\LevelController::class);
         Route::resource('school-classes', App\Http\Controllers\Admin\SchoolClassController::class);
@@ -61,6 +85,8 @@ Route::middleware('auth')->group(function () {
         Route::resource('homeroom-assignments', App\Http\Controllers\Admin\HomeroomAssignmentController::class);
         Route::resource('teaching-assignments', App\Http\Controllers\Admin\TeachingAssignmentController::class);
         Route::get('grades', [App\Http\Controllers\Admin\GradeMonitoringController::class, 'index'])->name('grades.index');
+        Route::get('journals', [App\Http\Controllers\Admin\JournalMonitoringController::class, 'index'])->name('journals.index');
+        Route::get('journals/{teacherJournal}', [App\Http\Controllers\Admin\JournalMonitoringController::class, 'show'])->name('journals.show');
     });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
