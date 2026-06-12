@@ -26,51 +26,42 @@ class LihatJadwalPelajaranController extends Controller
             'tahunAjaran', 'semester', 'kelas.level', 'mapel', 'guru',
         ]);
 
+        $info = null;
+
         if ($role === 'wali_kelas') {
             $teacher = $user->teacher;
-            if (!$teacher) {
-                abort(403, 'Akun guru tidak ditemukan.');
+            $classIds = collect();
+
+            if ($teacher) {
+                $classIds = HomeroomAssignment::where('teacher_id', $teacher->id)
+                    ->pluck('school_class_id');
             }
 
-            $activeAcademicYear = AcademicYear::where('is_active', true)->first();
-            $activeSemester = Semester::where('is_active', true)->first();
+            if ($classIds->isNotEmpty()) {
+                $query->whereIn('kelas_id', $classIds);
 
-            $classIds = HomeroomAssignment::where('teacher_id', $teacher->id)
-                ->when($activeAcademicYear, fn($q) => $q->where('academic_year_id', $activeAcademicYear->id))
-                ->when($activeSemester, fn($q) => $q->where('semester_id', $activeSemester->id))
-                ->pluck('school_class_id');
-
-            if ($classIds->isEmpty()) {
-                $jadwals = collect();
-                $academicYears = AcademicYear::orderByDesc('start_date')->pluck('name', 'id');
-                $semesters = Semester::orderByDesc('start_date')->pluck('name', 'id');
+                $schoolClasses = SchoolClass::active()->with('level')
+                    ->whereIn('id', $classIds)->orderBy('sort_order')->get()
+                    ->mapWithKeys(fn($c) => [$c->id => $c->level->name . ' - ' . $c->name]);
+            } else {
+                $query->whereRaw('0 = 1');
                 $schoolClasses = collect();
-                $teachers = collect();
-                $subjects = Subject::orderBy('name')->pluck('name', 'id');
-                $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-
-                return view('jadwal-pelajaran.index', compact(
-                    'jadwals', 'academicYears', 'semesters', 'schoolClasses', 'teachers', 'subjects', 'days',
-                ))->with('info', 'Anda belum memiliki kelas yang diampu.');
+                $info = 'Belum ada jadwal pelajaran yang terhubung dengan akun Anda.';
             }
-
-            $query->whereIn('kelas_id', $classIds);
-
-            $availableClasses = SchoolClass::active()->with('level')
-                ->whereIn('id', $classIds)->orderBy('sort_order')->get()
-                ->mapWithKeys(fn($c) => [$c->id => $c->level->name . ' - ' . $c->name]);
         } elseif ($role === 'guru_fan') {
             $teacher = $user->teacher;
-            if (!$teacher) {
-                abort(403, 'Akun guru tidak ditemukan.');
+
+            if ($teacher) {
+                $query->where('guru_id', $teacher->id);
+            } else {
+                $query->whereRaw('0 = 1');
+                $info = 'Belum ada jadwal pelajaran yang terhubung dengan akun Anda.';
             }
 
-            $query->where('guru_id', $teacher->id);
-
-            $availableClasses = SchoolClass::active()->with('level')->orderBy('sort_order')->get()
+            $schoolClasses = SchoolClass::active()->with('level')->orderBy('sort_order')->get()
                 ->mapWithKeys(fn($c) => [$c->id => $c->level->name . ' - ' . $c->name]);
         } else {
-            $availableClasses = SchoolClass::active()->with('level')->orderBy('sort_order')->get()
+            $schoolClasses = SchoolClass::active()->with('level')->orderBy('sort_order')->get()
                 ->mapWithKeys(fn($c) => [$c->id => $c->level->name . ' - ' . $c->name]);
         }
 
@@ -101,11 +92,8 @@ class LihatJadwalPelajaranController extends Controller
         $subjects = Subject::orderBy('name')->pluck('name', 'id');
         $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
 
-        $schoolClasses = $availableClasses ?? SchoolClass::active()->with('level')->orderBy('sort_order')->get()
-            ->mapWithKeys(fn($c) => [$c->id => $c->level->name . ' - ' . $c->name]);
-
         return view('jadwal-pelajaran.index', compact(
-            'jadwals', 'academicYears', 'semesters', 'schoolClasses', 'teachers', 'subjects', 'days',
+            'jadwals', 'academicYears', 'semesters', 'schoolClasses', 'teachers', 'subjects', 'days', 'info', 'role',
         ));
     }
 }

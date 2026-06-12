@@ -174,6 +174,8 @@ Route::middleware('auth')->group(function () {
             Route::post('/store', [App\Http\Controllers\Admin\StudentPlacementController::class, 'store'])->name('store');
         });
 
+        Route::get('/jadwal-pelajaran/template', [App\Http\Controllers\Admin\JadwalPelajaranController::class, 'template'])
+            ->name('jadwal-pelajaran.template');
         Route::resource('jadwal-pelajaran', App\Http\Controllers\Admin\JadwalPelajaranController::class)->except(['show']);
     });
 

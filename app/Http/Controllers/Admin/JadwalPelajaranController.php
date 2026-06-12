@@ -11,9 +11,39 @@ use App\Models\SchoolClass;
 use App\Models\Semester;
 use App\Models\Subject;
 use App\Models\Teacher;
+use Illuminate\Http\Request;
 
 class JadwalPelajaranController extends Controller
 {
+    public function template()
+    {
+        $user = auth()->user();
+        $role = $user->getRoleNames()->first();
+
+        if (!in_array($role, ['super_admin', 'kepala_sekolah'])) {
+            abort(403, 'Akses ditolak.');
+        }
+
+        $activeAcademicYear = AcademicYear::where('is_active', true)->first();
+        $activeSemester = Semester::where('is_active', true)->first();
+
+        $jadwalByClass = JadwalPelajaran::with(['kelas.level', 'guru', 'mapel'])
+            ->when($activeAcademicYear, fn($q) => $q->where('tahun_ajaran_id', $activeAcademicYear->id))
+            ->when($activeSemester, fn($q) => $q->where('semester_id', $activeSemester->id))
+            ->get()
+            ->groupBy('kelas_id')
+            ->map(fn($items) => $items->groupBy('hari'));
+
+        $classIds = $jadwalByClass->keys();
+        $classes = SchoolClass::whereIn('id', $classIds)->with('level')->orderBy('sort_order')->get();
+
+        $days = ['Sabtu', 'Ahad', 'Senin', 'Selasa', 'Rabu', 'Kamis'];
+
+        return view('admin.jadwal-pelajaran.template', compact(
+            'jadwalByClass', 'classes', 'days', 'activeAcademicYear', 'activeSemester'
+        ));
+    }
+
     public function index()
     {
         $jadwals = JadwalPelajaran::with([

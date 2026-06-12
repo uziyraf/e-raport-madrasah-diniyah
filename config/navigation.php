@@ -19,6 +19,7 @@ return [
             'icon' => 'bx bx-time',
             'children' => [
                 'list_jadwal' => ['label' => 'List Semua Jadwal Pelajaran', 'route' => 'jadwal-pelajaran.index', 'icon' => 'bx bx-list-ul'],
+                'template_jadwal' => ['label' => 'Template Jadwal Pelajaran', 'route' => 'admin.jadwal-pelajaran.template', 'icon' => 'bx bx-table'],
                 'pembuatan_jadwal' => ['label' => 'Pembuatan Jadwal Pelajaran', 'route' => 'admin.jadwal-pelajaran.index', 'icon' => 'bx bx-edit'],
             ],
         ],
@@ -49,6 +50,7 @@ return [
             'icon' => 'bx bx-time',
             'children' => [
                 'list_jadwal' => ['label' => 'List Semua Jadwal Pelajaran', 'route' => 'jadwal-pelajaran.index', 'icon' => 'bx bx-list-ul'],
+                'template_jadwal' => ['label' => 'Template Jadwal Pelajaran', 'route' => 'admin.jadwal-pelajaran.template', 'icon' => 'bx bx-table'],
             ],
         ],
         'kenaikan_penempatan_santri' => ['label' => 'Kenaikan/Penempatan Santri', 'route' => 'kepala_sekolah.student_placements.index', 'icon' => 'bx bx-transfer'],
