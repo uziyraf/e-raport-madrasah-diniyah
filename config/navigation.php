@@ -21,7 +21,7 @@ return [
         'monitoring_absensi' => ['label' => 'Monitoring Absensi', 'route' => 'admin.attendances.index', 'icon' => 'bx bx-list-ul'],
         'raport_arab' => ['label' => 'Preview Raport Arab', 'route' => 'admin.report-cards.index', 'icon' => 'bx bx-file'],
         'monitoring' => ['label' => 'Monitoring', 'route' => 'super_admin.monitoring.index', 'icon' => 'bx bx-desktop'],
-        'export_data' => ['label' => 'Export Data', 'route' => 'super_admin.exports.index', 'icon' => 'bx bx-download'],
+        'export_data' => ['label' => 'Export Data', 'route' => 'admin.exports.index', 'icon' => 'bx bx-download'],
     ],
 
     'kepala_sekolah' => [
@@ -44,7 +44,7 @@ return [
         'monitoring_absensi' => ['label' => 'Monitoring Absensi', 'route' => 'admin.attendances.index', 'icon' => 'bx bx-list-ul'],
         'raport_arab' => ['label' => 'Preview Raport Arab', 'route' => 'admin.report-cards.index', 'icon' => 'bx bx-file'],
         'monitoring' => ['label' => 'Monitoring', 'route' => 'kepala_sekolah.monitoring.index', 'icon' => 'bx bx-desktop'],
-        'export_data' => ['label' => 'Export Data', 'route' => 'kepala_sekolah.exports.index', 'icon' => 'bx bx-download'],
+        'export_data' => ['label' => 'Export Data', 'route' => 'admin.exports.index', 'icon' => 'bx bx-download'],
     ],
 
     'wali_kelas' => [
@@ -57,7 +57,7 @@ return [
         'absensi_santri' => ['label' => 'Absensi Santri', 'route' => 'homeroom.attendances.index', 'icon' => 'bx bx-list-ul'],
         'nilai_sikap' => ['label' => 'Nilai Sikap', 'route' => 'homeroom.attitudes.index', 'icon' => 'bx bx-notepad'],
         'raport_santri' => ['label' => 'Raport Santri', 'route' => 'homeroom.report-cards.index', 'icon' => 'bx bx-file'],
-        'export_rekap' => ['label' => 'Export Rekap', 'route' => 'wali_kelas.exports.index', 'icon' => 'bx bx-download'],
+        'export_rekap' => ['label' => 'Export Rekap', 'route' => 'homeroom.exports.index', 'icon' => 'bx bx-download'],
         'profil' => ['label' => 'Profil', 'route' => 'profile.edit', 'icon' => 'bx bx-user-circle'],
     ],
 
@@ -70,7 +70,7 @@ return [
         'absensi_mengajar' => ['label' => 'Absensi Mengajar', 'route' => 'teacher.attendances.index', 'icon' => 'bx bx-list-ul'],
         'input_nilai' => ['label' => 'Input Nilai', 'route' => 'teacher.grades.index', 'icon' => 'bx bx-edit'],
         'rekap_nilai' => ['label' => 'Rekap Nilai', 'route' => 'guru_fan.reports.index', 'icon' => 'bx bx-chart'],
-        'export_nilai' => ['label' => 'Export Nilai', 'route' => 'guru_fan.exports.index', 'icon' => 'bx bx-download'],
+        'export_nilai' => ['label' => 'Export Rekap', 'route' => 'teacher.exports.index', 'icon' => 'bx bx-download'],
         'profil' => ['label' => 'Profil', 'route' => 'profile.edit', 'icon' => 'bx bx-user-circle'],
     ],
 
