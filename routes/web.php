@@ -43,6 +43,28 @@ Route::middleware('auth')->group(function () {
         Route::get('/{teachingAssignment}', [App\Http\Controllers\Homeroom\GradeMonitoringController::class, 'show'])->name('show');
     });
 
+    Route::prefix('wali-kelas/absensi')->name('homeroom.attendances.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Homeroom\AttendanceController::class, 'index'])->name('index');
+        Route::get('/create', [App\Http\Controllers\Homeroom\AttendanceController::class, 'create'])->name('create');
+        Route::post('/', [App\Http\Controllers\Homeroom\AttendanceController::class, 'store'])->name('store');
+        Route::get('/student/{student}', [App\Http\Controllers\Homeroom\AttendanceController::class, 'studentHistory'])->name('student');
+        Route::get('/{attendanceSession}', [App\Http\Controllers\Homeroom\AttendanceController::class, 'show'])->name('show');
+        Route::get('/{attendanceSession}/edit', [App\Http\Controllers\Homeroom\AttendanceController::class, 'edit'])->name('edit');
+        Route::put('/{attendanceSession}', [App\Http\Controllers\Homeroom\AttendanceController::class, 'update'])->name('update');
+        Route::delete('/{attendanceSession}', [App\Http\Controllers\Homeroom\AttendanceController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('guru/absensi')->name('teacher.attendances.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Teacher\AttendanceController::class, 'index'])->name('index');
+        Route::get('/create', [App\Http\Controllers\Teacher\AttendanceController::class, 'create'])->name('create');
+        Route::post('/', [App\Http\Controllers\Teacher\AttendanceController::class, 'store'])->name('store');
+        Route::get('/student/{student}', [App\Http\Controllers\Teacher\AttendanceController::class, 'studentHistory'])->name('student');
+        Route::get('/{attendanceSession}', [App\Http\Controllers\Teacher\AttendanceController::class, 'show'])->name('show');
+        Route::get('/{attendanceSession}/edit', [App\Http\Controllers\Teacher\AttendanceController::class, 'edit'])->name('edit');
+        Route::put('/{attendanceSession}', [App\Http\Controllers\Teacher\AttendanceController::class, 'update'])->name('update');
+        Route::delete('/{attendanceSession}', [App\Http\Controllers\Teacher\AttendanceController::class, 'destroy'])->name('destroy');
+    });
+
     Route::prefix('wali-kelas/sikap')->name('homeroom.attitudes.')->group(function () {
         Route::get('/', [App\Http\Controllers\Homeroom\AttitudeController::class, 'index'])->name('index');
         Route::get('/{student}/edit', [App\Http\Controllers\Homeroom\AttitudeController::class, 'edit'])->name('edit');
@@ -85,8 +107,20 @@ Route::middleware('auth')->group(function () {
         Route::resource('homeroom-assignments', App\Http\Controllers\Admin\HomeroomAssignmentController::class);
         Route::resource('teaching-assignments', App\Http\Controllers\Admin\TeachingAssignmentController::class);
         Route::get('grades', [App\Http\Controllers\Admin\GradeMonitoringController::class, 'index'])->name('grades.index');
-        Route::get('journals', [App\Http\Controllers\Admin\JournalMonitoringController::class, 'index'])->name('journals.index');
-        Route::get('journals/{teacherJournal}', [App\Http\Controllers\Admin\JournalMonitoringController::class, 'show'])->name('journals.show');
+        Route::prefix('journals')->name('journals.')->group(function () {
+            Route::get('/', [App\Http\Controllers\Admin\JournalMonitoringController::class, 'index'])->name('index');
+            Route::get('/kelas/{schoolClass}', [App\Http\Controllers\Admin\JournalMonitoringController::class, 'classDetail'])->name('class');
+            Route::get('/kelas/{schoolClass}/{journalType}', [App\Http\Controllers\Admin\JournalMonitoringController::class, 'typeStudents'])->name('type');
+            Route::get('/kelas/{schoolClass}/{journalType}/{student}', [App\Http\Controllers\Admin\JournalMonitoringController::class, 'studentHistory'])->name('student');
+            Route::get('/{teacherJournal}', [App\Http\Controllers\Admin\JournalMonitoringController::class, 'show'])->name('show')->whereNumber('teacherJournal');
+        });
+        Route::prefix('absensi')->name('attendances.')->group(function () {
+            Route::get('/', [App\Http\Controllers\Admin\AttendanceMonitoringController::class, 'index'])->name('index');
+            Route::get('/kelas/{schoolClass}', [App\Http\Controllers\Admin\AttendanceMonitoringController::class, 'classDetail'])->name('class');
+            Route::get('/kelas/{schoolClass}/homeroom', [App\Http\Controllers\Admin\AttendanceMonitoringController::class, 'homeroom'])->name('homeroom');
+            Route::get('/kelas/{schoolClass}/teaching/{teachingAssignment}', [App\Http\Controllers\Admin\AttendanceMonitoringController::class, 'teaching'])->name('teaching');
+            Route::get('/kelas/{schoolClass}/student/{student}', [App\Http\Controllers\Admin\AttendanceMonitoringController::class, 'student'])->name('student');
+        });
     });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
