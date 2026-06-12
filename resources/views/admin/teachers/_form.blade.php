@@ -15,6 +15,13 @@
             </div>
 
             <div>
+                <label for="arabic_name" class="mb-2 block text-sm font-medium text-neutral-700">Nama Arab</label>
+                <input type="text" name="arabic_name" id="arabic_name" value="{{ old('arabic_name', $t->arabic_name ?? '') }}"
+                       class="w-full rounded-sm border border-stone-300 bg-white px-4 py-3 text-sm text-zinc-900 outline-none transition focus:border-teal-950 focus:ring-2 focus:ring-teal-950/10">
+                @error('arabic_name') <p class="mt-1 text-sm text-red-700">{{ $message }}</p> @enderror
+            </div>
+
+            <div>
                 <label for="teacher_code" class="mb-2 block text-sm font-medium text-neutral-700">Kode Guru</label>
                 <input type="text" name="teacher_code" id="teacher_code" value="{{ old('teacher_code', $t->teacher_code ?? '') }}"
                        class="w-full rounded-sm border border-stone-300 bg-white px-4 py-3 text-sm text-zinc-900 outline-none transition focus:border-teal-950 focus:ring-2 focus:ring-teal-950/10">

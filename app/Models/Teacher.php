@@ -15,6 +15,7 @@ class Teacher extends Model
         'user_id',
         'teacher_code',
         'name',
+        'arabic_name',
         'gender',
         'birth_place',
         'birth_date',

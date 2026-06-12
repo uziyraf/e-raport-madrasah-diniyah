@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAttendanceRequest;
+use App\Models\AcademicYear;
+use App\Models\AttendanceDetail;
 use App\Models\AttendanceSession;
+use App\Models\Semester;
 use App\Models\Student;
 use App\Models\StudentClassEnrollment;
 use App\Models\TeachingAssignment;
@@ -284,6 +287,38 @@ class AttendanceController extends Controller
             abort(403, 'Santri ini tidak terdaftar di kelas penugasan anda.');
         }
 
+        $viewMode = request('view', 'table');
+
+        if ($viewMode === 'calendar') {
+            $activeYear = AcademicYear::where('is_active', true)->firstOrFail();
+            $activeSemester = Semester::whereHas('academicYear', fn($q) => $q->where('is_active', true))
+                ->where('is_active', true)->firstOrFail();
+
+            $month = (int) request('month', now()->month);
+            $year = (int) request('year', now()->year);
+
+            $attendanceDetails = AttendanceDetail::with([
+                'session.teachingAssignment.subject',
+                'session.teacher',
+            ])
+                ->where('student_id', $student->id)
+                ->whereHas('session', fn($q) => $q
+                    ->where('school_class_id', $assignment->school_class_id)
+                    ->where('academic_year_id', $activeYear->id)
+                    ->where('semester_id', $activeSemester->id)
+                    ->whereMonth('attendance_date', $month)
+                    ->whereYear('attendance_date', $year)
+                )
+                ->get()
+                ->groupBy(fn($d) => $d->session->attendance_date->format('Y-m-d'));
+
+            $attendanceDetails = $attendanceDetails->sortKeys();
+
+            return view('teacher.attendances.student', compact(
+                'student', 'assignment', 'viewMode', 'month', 'year', 'attendanceDetails',
+            ));
+        }
+
         $attendances = AttendanceSession::with([
             'details' => fn($q) => $q->where('student_id', $student->id),
             'teachingAssignment.subject', 'schoolClass.level',
@@ -305,7 +340,7 @@ class AttendanceController extends Controller
         ];
 
         return view('teacher.attendances.student', compact(
-            'attendances', 'student', 'assignment', 'statusLabels'
+            'attendances', 'student', 'assignment', 'statusLabels', 'viewMode',
         ));
     }
 }

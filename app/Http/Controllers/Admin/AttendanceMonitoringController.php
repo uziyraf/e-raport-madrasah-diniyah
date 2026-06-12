@@ -270,6 +270,35 @@ class AttendanceMonitoringController extends Controller
 
         $schoolClass->loadMissing('level');
 
+        $viewMode = request('view', 'table');
+
+        if ($viewMode === 'calendar') {
+            $month = (int) request('month', now()->month);
+            $year = (int) request('year', now()->year);
+
+            $attendanceDetails = AttendanceDetail::with([
+                'session.teachingAssignment.subject',
+                'session.teacher',
+            ])
+                ->where('student_id', $student->id)
+                ->whereHas('session', fn($q) => $q
+                    ->where('school_class_id', $schoolClass->id)
+                    ->where('academic_year_id', $activeYear->id)
+                    ->where('semester_id', $activeSemester->id)
+                    ->whereMonth('attendance_date', $month)
+                    ->whereYear('attendance_date', $year)
+                )
+                ->get()
+                ->groupBy(fn($d) => $d->session->attendance_date->format('Y-m-d'));
+
+            $attendanceDetails = $attendanceDetails->sortKeys();
+
+            return view('admin.attendances.student', compact(
+                'student', 'schoolClass', 'activeYear', 'activeSemester',
+                'viewMode', 'month', 'year', 'attendanceDetails',
+            ));
+        }
+
         $attendances = AttendanceSession::with([
             'details' => fn($q) => $q->where('student_id', $student->id),
             'teachingAssignment.subject',
@@ -295,7 +324,7 @@ class AttendanceMonitoringController extends Controller
 
         return view('admin.attendances.student', compact(
             'attendances', 'student', 'schoolClass', 'activeYear', 'activeSemester',
-            'statusLabels', 'attendanceTypes',
+            'statusLabels', 'attendanceTypes', 'viewMode',
         ));
     }
 }

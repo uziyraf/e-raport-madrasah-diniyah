@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\AttendanceDetail;
 
@@ -54,5 +55,12 @@ class Student extends Model
     public function attendanceDetails(): HasMany
     {
         return $this->hasMany(AttendanceDetail::class);
+    }
+
+    public function guardians(): BelongsToMany
+    {
+        return $this->belongsToMany(Guardian::class, 'guardian_students')
+            ->withPivot('relationship', 'is_primary')
+            ->withTimestamps();
     }
 }

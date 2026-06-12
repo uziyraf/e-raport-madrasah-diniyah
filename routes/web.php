@@ -26,9 +26,8 @@ Route::middleware('auth')->group(function () {
         return redirect()->route('dashboard');
     })->name('teacher.dashboard');
 
-    Route::get('/wali-santri/dashboard', function () {
-        return redirect()->route('dashboard');
-    })->name('guardian.dashboard');
+    Route::get('/wali-santri/dashboard', [App\Http\Controllers\Guardian\DashboardController::class, 'index'])
+        ->name('guardian.dashboard');
 
     Route::prefix('guru/nilai')->name('teacher.grades.')->group(function () {
         Route::get('/', [App\Http\Controllers\Teacher\GradeController::class, 'index'])->name('index');
@@ -63,6 +62,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/{attendanceSession}/edit', [App\Http\Controllers\Teacher\AttendanceController::class, 'edit'])->name('edit');
         Route::put('/{attendanceSession}', [App\Http\Controllers\Teacher\AttendanceController::class, 'update'])->name('update');
         Route::delete('/{attendanceSession}', [App\Http\Controllers\Teacher\AttendanceController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('wali-kelas/raport')->name('homeroom.report-cards.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Homeroom\ReportCardController::class, 'index'])->name('index');
+        Route::get('/{student}', [App\Http\Controllers\Homeroom\ReportCardController::class, 'show'])->name('show');
     });
 
     Route::prefix('wali-kelas/sikap')->name('homeroom.attitudes.')->group(function () {
@@ -114,6 +118,10 @@ Route::middleware('auth')->group(function () {
             Route::get('/kelas/{schoolClass}/{journalType}/{student}', [App\Http\Controllers\Admin\JournalMonitoringController::class, 'studentHistory'])->name('student');
             Route::get('/{teacherJournal}', [App\Http\Controllers\Admin\JournalMonitoringController::class, 'show'])->name('show')->whereNumber('teacherJournal');
         });
+        Route::prefix('raport')->name('report-cards.')->group(function () {
+            Route::get('/', [App\Http\Controllers\Admin\ReportCardController::class, 'index'])->name('index');
+            Route::get('/{student}', [App\Http\Controllers\Admin\ReportCardController::class, 'show'])->name('show');
+        });
         Route::prefix('absensi')->name('attendances.')->group(function () {
             Route::get('/', [App\Http\Controllers\Admin\AttendanceMonitoringController::class, 'index'])->name('index');
             Route::get('/kelas/{schoolClass}', [App\Http\Controllers\Admin\AttendanceMonitoringController::class, 'classDetail'])->name('class');
@@ -121,6 +129,13 @@ Route::middleware('auth')->group(function () {
             Route::get('/kelas/{schoolClass}/teaching/{teachingAssignment}', [App\Http\Controllers\Admin\AttendanceMonitoringController::class, 'teaching'])->name('teaching');
             Route::get('/kelas/{schoolClass}/student/{student}', [App\Http\Controllers\Admin\AttendanceMonitoringController::class, 'student'])->name('student');
         });
+        Route::resource('guardians', App\Http\Controllers\Admin\GuardianController::class);
+    });
+
+    Route::prefix('wali-santri')->name('guardian.')->middleware('role:wali_santri')->group(function () {
+        Route::get('/santri', [App\Http\Controllers\Guardian\StudentController::class, 'index'])->name('students.index');
+        Route::get('/santri/{student}', [App\Http\Controllers\Guardian\StudentController::class, 'show'])->name('students.show');
+        Route::get('/absensi', [App\Http\Controllers\Guardian\AttendanceController::class, 'index'])->name('attendances.index');
     });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

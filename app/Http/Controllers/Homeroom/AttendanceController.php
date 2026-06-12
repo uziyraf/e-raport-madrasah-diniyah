@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Homeroom;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAttendanceRequest;
+use App\Models\AcademicYear;
+use App\Models\AttendanceDetail;
 use App\Models\AttendanceSession;
 use App\Models\HomeroomAssignment;
+use App\Models\Semester;
 use App\Models\Student;
 use App\Models\StudentClassEnrollment;
 use Illuminate\Http\Request;
@@ -307,6 +310,38 @@ class AttendanceController extends Controller
             abort(403, 'Santri ini tidak terdaftar di kelas wali anda.');
         }
 
+        $viewMode = request('view', 'table');
+
+        if ($viewMode === 'calendar') {
+            $activeYear = AcademicYear::where('is_active', true)->firstOrFail();
+            $activeSemester = Semester::whereHas('academicYear', fn($q) => $q->where('is_active', true))
+                ->where('is_active', true)->firstOrFail();
+
+            $month = (int) request('month', now()->month);
+            $year = (int) request('year', now()->year);
+
+            $attendanceDetails = AttendanceDetail::with([
+                'session.teachingAssignment.subject',
+                'session.teacher',
+            ])
+                ->where('student_id', $student->id)
+                ->whereHas('session', fn($q) => $q
+                    ->where('school_class_id', $homeroom->school_class_id)
+                    ->where('academic_year_id', $activeYear->id)
+                    ->where('semester_id', $activeSemester->id)
+                    ->whereMonth('attendance_date', $month)
+                    ->whereYear('attendance_date', $year)
+                )
+                ->get()
+                ->groupBy(fn($d) => $d->session->attendance_date->format('Y-m-d'));
+
+            $attendanceDetails = $attendanceDetails->sortKeys();
+
+            return view('homeroom.attendances.student', compact(
+                'student', 'homeroom', 'viewMode', 'month', 'year', 'attendanceDetails',
+            ));
+        }
+
         $attendances = AttendanceSession::with(['details' => fn($q) => $q->where('student_id', $student->id), 'teachingAssignment.subject', 'schoolClass.level'])
             ->where('teacher_id', $teacher->id)
             ->where('attendance_type', 'homeroom')
@@ -324,7 +359,7 @@ class AttendanceController extends Controller
         ];
 
         return view('homeroom.attendances.student', compact(
-            'attendances', 'student', 'homeroom', 'statusLabels'
+            'attendances', 'student', 'homeroom', 'statusLabels', 'viewMode',
         ));
     }
 }

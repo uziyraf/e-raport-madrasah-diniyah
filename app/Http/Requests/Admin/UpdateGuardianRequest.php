@@ -5,7 +5,7 @@ namespace App\Http\Requests\Admin;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class UpdateTeacherRequest extends FormRequest
+class UpdateGuardianRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -14,40 +14,35 @@ class UpdateTeacherRequest extends FormRequest
 
     public function rules(): array
     {
-        $teacher = $this->route('teacher');
-        $teacherId = $teacher->id ?? $teacher;
+        $guardian = $this->route('guardian');
 
         $rules = [
-            'teacher_code' => ['nullable', 'string', 'max:50', Rule::unique('teachers', 'teacher_code')->ignore($teacherId)],
             'name' => ['required', 'string', 'max:255'],
-            'arabic_name' => ['nullable', 'string', 'max:255'],
-            'gender' => ['nullable', 'string', 'in:male,female'],
-            'birth_place' => ['nullable', 'string', 'max:100'],
-            'birth_date' => ['nullable', 'date'],
             'phone' => ['nullable', 'string', 'max:30'],
             'email' => ['nullable', 'email', 'max:255'],
             'address' => ['nullable', 'string'],
-            'signature' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'relationship' => ['nullable', 'string', 'max:100'],
             'status' => ['required', 'string', 'in:active,inactive'],
+            'students' => ['nullable', 'array'],
+            'students.*' => ['exists:students,id'],
             'account.create_account' => ['boolean'],
         ];
 
         if ($this->boolean('account.create_account')) {
-            $rules['email'][] = 'required';
-
-            if ($teacher->user_id) {
-                $rules['email'][] = Rule::unique('users', 'email')->ignore($teacher->user_id);
+            if ($guardian->user_id) {
                 $rules['account.username'] = [
                     'required', 'string', 'max:100',
-                    Rule::unique('users', 'username')->ignore($teacher->user_id),
+                    Rule::unique('users', 'username')->ignore($guardian->user_id),
+                ];
+                $rules['account.email'] = [
+                    'nullable', 'email', 'max:255',
+                    Rule::unique('users', 'email')->ignore($guardian->user_id),
                 ];
             } else {
-                $rules['email'][] = 'unique:users,email';
                 $rules['account.username'] = ['required', 'string', 'max:100', 'unique:users,username'];
                 $rules['account.password'] = ['required', 'string', 'min:8'];
+                $rules['account.email'] = ['nullable', 'email', 'max:255', 'unique:users,email'];
             }
-
-            $rules['account.role'] = ['required', 'string', 'in:kepala_sekolah,wali_kelas,guru_fan'];
         }
 
         return $rules;
