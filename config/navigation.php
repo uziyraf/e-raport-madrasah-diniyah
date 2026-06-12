@@ -14,7 +14,15 @@ return [
         'semester' => ['label' => 'Semester', 'route' => 'admin.semesters.index', 'icon' => 'bx bx-calendar-alt'],
         'wali_kelas' => ['label' => 'Wali Kelas', 'route' => 'admin.homeroom-assignments.index', 'icon' => 'bx bx-chalkboard'],
         'guru_fan_mapel' => ['label' => 'Guru Fan/Mapel', 'route' => 'admin.teaching-assignments.index', 'icon' => 'bx bx-chalkboard'],
-        'jadwal_pelajaran' => ['label' => 'Jadwal Pelajaran', 'route' => 'super_admin.schedules.index', 'icon' => 'bx bx-time'],
+        'jadwal_pelajaran' => [
+            'label' => 'Jadwal Pelajaran',
+            'icon' => 'bx bx-time',
+            'children' => [
+                'list_jadwal' => ['label' => 'List Semua Jadwal Pelajaran', 'route' => 'jadwal-pelajaran.index', 'icon' => 'bx bx-list-ul'],
+                'template_jadwal' => ['label' => 'Template Jadwal Pelajaran', 'route' => 'admin.jadwal-pelajaran.template', 'icon' => 'bx bx-table'],
+                'pembuatan_jadwal' => ['label' => 'Pembuatan Jadwal Pelajaran', 'route' => 'admin.jadwal-pelajaran.index', 'icon' => 'bx bx-edit'],
+            ],
+        ],
         'kenaikan_penempatan_santri' => ['label' => 'Kenaikan/Penempatan Santri', 'route' => 'admin.placements.index', 'icon' => 'bx bx-transfer'],
         'monitoring_nilai' => ['label' => 'Monitoring Nilai', 'route' => 'admin.grades.index', 'icon' => 'bx bx-notepad'],
         'monitoring_jurnal' => ['label' => 'Monitoring Jurnal', 'route' => 'admin.journals.index', 'icon' => 'bx bx-book-content'],
@@ -37,7 +45,14 @@ return [
         'semester' => ['label' => 'Semester', 'route' => 'admin.semesters.index', 'icon' => 'bx bx-calendar-alt'],
         'wali_kelas' => ['label' => 'Wali Kelas', 'route' => 'admin.homeroom-assignments.index', 'icon' => 'bx bx-chalkboard'],
         'guru_fan_mapel' => ['label' => 'Guru Fan/Mapel', 'route' => 'admin.teaching-assignments.index', 'icon' => 'bx bx-chalkboard'],
-        'jadwal_pelajaran' => ['label' => 'Jadwal Pelajaran', 'route' => 'kepala_sekolah.schedules.index', 'icon' => 'bx bx-time'],
+        'jadwal_pelajaran' => [
+            'label' => 'Jadwal Pelajaran',
+            'icon' => 'bx bx-time',
+            'children' => [
+                'list_jadwal' => ['label' => 'List Semua Jadwal Pelajaran', 'route' => 'jadwal-pelajaran.index', 'icon' => 'bx bx-list-ul'],
+                'template_jadwal' => ['label' => 'Template Jadwal Pelajaran', 'route' => 'admin.jadwal-pelajaran.template', 'icon' => 'bx bx-table'],
+            ],
+        ],
         'kenaikan_penempatan_santri' => ['label' => 'Kenaikan/Penempatan Santri', 'route' => 'kepala_sekolah.student_placements.index', 'icon' => 'bx bx-transfer'],
         'monitoring_nilai' => ['label' => 'Monitoring Nilai', 'route' => 'admin.grades.index', 'icon' => 'bx bx-notepad'],
         'monitoring_jurnal' => ['label' => 'Monitoring Jurnal', 'route' => 'admin.journals.index', 'icon' => 'bx bx-book-content'],
@@ -52,7 +67,13 @@ return [
         'input_nilai_mengajar' => ['label' => 'Input Nilai Mengajar', 'route' => 'teacher.grades.index', 'icon' => 'bx bx-edit'],
         'monitoring_nilai' => ['label' => 'Monitoring Nilai', 'route' => 'homeroom.grades.index', 'icon' => 'bx bx-notepad'],
         'data_santri_kelas' => ['label' => 'Data Santri Kelas', 'route' => 'wali_kelas.students.index', 'icon' => 'bx bxs-user-rectangle'],
-        'jadwal_kelas' => ['label' => 'Jadwal Kelas', 'route' => 'wali_kelas.schedules.index', 'icon' => 'bx bx-time'],
+        'jadwal_kelas' => [
+            'label' => 'Jadwal Pelajaran',
+            'icon' => 'bx bx-time',
+            'children' => [
+                'list_jadwal' => ['label' => 'List Semua Jadwal Pelajaran', 'route' => 'jadwal-pelajaran.index', 'icon' => 'bx bx-list-ul'],
+            ],
+        ],
         'jurnal_guru' => ['label' => 'Jurnal Guru', 'route' => 'homeroom.journals.index', 'icon' => 'bx bx-book-content'],
         'absensi_santri' => ['label' => 'Absensi Santri', 'route' => 'homeroom.attendances.index', 'icon' => 'bx bx-list-ul'],
         'nilai_sikap' => ['label' => 'Nilai Sikap', 'route' => 'homeroom.attitudes.index', 'icon' => 'bx bx-notepad'],
@@ -63,7 +84,13 @@ return [
 
     'guru_fan' => [
         'dashboard' => ['label' => 'Dashboard Guru Fan', 'route' => 'dashboard', 'icon' => 'bx bx-home-circle'],
-        'jadwal_mengajar' => ['label' => 'Jadwal Mengajar', 'route' => 'guru_fan.schedules.index', 'icon' => 'bx bx-time'],
+        'jadwal_mengajar' => [
+            'label' => 'Jadwal Pelajaran',
+            'icon' => 'bx bx-time',
+            'children' => [
+                'list_jadwal' => ['label' => 'List Semua Jadwal Pelajaran', 'route' => 'jadwal-pelajaran.index', 'icon' => 'bx bx-list-ul'],
+            ],
+        ],
         'kelas_fan' => ['label' => 'Kelas dan Fan/Mapel', 'route' => 'guru_fan.subjects.index', 'icon' => 'bx bx-book-open'],
         'daftar_santri' => ['label' => 'Daftar Santri', 'route' => 'guru_fan.students.index', 'icon' => 'bx bxs-user-rectangle'],
         'jurnal_guru' => ['label' => 'Jurnal Guru', 'route' => 'teacher.journals.index', 'icon' => 'bx bx-book-content'],
