@@ -33,14 +33,14 @@
 
             <div>
                 <label for="start_date" class="mb-2 block text-sm font-medium text-neutral-700">Tanggal Mulai</label>
-                <input type="date" name="start_date" id="start_date" value="{{ old('start_date', $semester->start_date->format('Y-m-d')) }}"
+                <input type="date" name="start_date" id="start_date" value="{{ old('start_date', $semester->start_date?->format('Y-m-d')) }}"
                        class="w-full rounded-sm border border-stone-300 bg-white px-4 py-3 text-sm text-zinc-900 outline-none transition focus:border-teal-950 focus:ring-2 focus:ring-teal-950/10">
                 @error('start_date') <p class="mt-1 text-sm text-red-700">{{ $message }}</p> @enderror
             </div>
 
             <div>
                 <label for="end_date" class="mb-2 block text-sm font-medium text-neutral-700">Tanggal Selesai</label>
-                <input type="date" name="end_date" id="end_date" value="{{ old('end_date', $semester->end_date->format('Y-m-d')) }}"
+                <input type="date" name="end_date" id="end_date" value="{{ old('end_date', $semester->end_date?->format('Y-m-d')) }}"
                        class="w-full rounded-sm border border-stone-300 bg-white px-4 py-3 text-sm text-zinc-900 outline-none transition focus:border-teal-950 focus:ring-2 focus:ring-teal-950/10">
                 @error('end_date') <p class="mt-1 text-sm text-red-700">{{ $message }}</p> @enderror
             </div>

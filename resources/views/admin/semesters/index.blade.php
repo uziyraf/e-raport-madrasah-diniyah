@@ -35,8 +35,8 @@
                         <tr>
                             <td class="border-t border-stone-300 px-6 py-4 text-base font-normal text-zinc-900">{{ $semester->name }}</td>
                             <td class="border-t border-stone-300 px-6 py-4 text-base font-normal text-zinc-900">{{ $semester->academicYear->name }}</td>
-                            <td class="border-t border-stone-300 px-6 py-4 text-base font-normal text-zinc-900">{{ $semester->start_date->format('d/m/Y') }}</td>
-                            <td class="border-t border-stone-300 px-6 py-4 text-base font-normal text-zinc-900">{{ $semester->end_date->format('d/m/Y') }}</td>
+                            <td class="border-t border-stone-300 px-6 py-4 text-base font-normal text-zinc-900">{{ $semester->start_date?->format('d/m/Y') ?? '-' }}</td>
+                            <td class="border-t border-stone-300 px-6 py-4 text-base font-normal text-zinc-900">{{ $semester->end_date?->format('d/m/Y') ?? '-' }}</td>
                             <td class="border-t border-stone-300 px-6 py-4">
                                 @if ($semester->is_active)
                                     <span class="inline-flex rounded-full bg-emerald-200 px-3 py-1 text-xs font-semibold text-green-950">Aktif</span>
