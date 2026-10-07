@@ -38,23 +38,16 @@ class AcademicYearController extends Controller
         // Semester Genap mulai 1 Januari (sehari setelah Ganjil berakhir)
         $genapStart = $ganjilEnd ? $ganjilEnd->copy()->addDay() : null;
 
-        // Otomatis membuat 2 semester (Ganjil & Genap)
-        $academicYear->semesters()->createMany([
-            [
-                'name' => 'Ganjil', 
-                'start_date' => $startDate?->format('Y-m-d'),
-                'end_date' => $ganjilEnd?->format('Y-m-d'),
-                'is_active' => $data['active_semester'] === 'Ganjil' ? ($data['is_active'] ?? false) : false
-            ],
-            [
-                'name' => 'Genap', 
-                'start_date' => $genapStart?->format('Y-m-d'),
-                'end_date' => $endDate?->format('Y-m-d'),
-                'is_active' => $data['active_semester'] === 'Genap' ? ($data['is_active'] ?? false) : false
-            ],
+        // Otomatis membuat 1 semester saja (sesuai semester aktif yang dipilih)
+        // Semester berikutnya dibuat terpisah lewat menu Semester.
+        $academicYear->semesters()->create([
+            'name' => $data['active_semester'],
+            'start_date' => $data['active_semester'] === 'Genap' ? $genapStart?->format('Y-m-d') : $startDate?->format('Y-m-d'),
+            'end_date' => $data['active_semester'] === 'Genap' ? $endDate?->format('Y-m-d') : $ganjilEnd?->format('Y-m-d'),
+            'is_active' => $data['is_active'] ?? false,
         ]);
 
-        return redirect()->route('admin.academic-years.index')->with('success', 'Tahun ajaran berhasil ditambahkan (Semester Ganjil & Genap juga dibuat otomatis).');
+        return redirect()->route('admin.academic-years.index')->with('success', 'Tahun ajaran berhasil ditambahkan (Semester ' . $data['active_semester'] . ' juga dibuat otomatis).');
     }
 
     public function edit(AcademicYear $academicYear)
