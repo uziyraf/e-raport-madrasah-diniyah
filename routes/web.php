@@ -40,6 +40,8 @@ Route::middleware('auth')->group(function () {
     Route::prefix('wali-kelas/nilai')->name('homeroom.grades.')->group(function () {
         Route::get('/', [App\Http\Controllers\Homeroom\GradeMonitoringController::class, 'index'])->name('index');
         Route::get('/{teachingAssignment}', [App\Http\Controllers\Homeroom\GradeMonitoringController::class, 'show'])->name('show');
+        Route::get('/{teachingAssignment}/edit', [App\Http\Controllers\Homeroom\GradeMonitoringController::class, 'edit'])->name('edit');
+        Route::put('/{teachingAssignment}', [App\Http\Controllers\Homeroom\GradeMonitoringController::class, 'update'])->name('update');
     });
 
     Route::prefix('wali-kelas/absensi')->name('homeroom.attendances.')->group(function () {

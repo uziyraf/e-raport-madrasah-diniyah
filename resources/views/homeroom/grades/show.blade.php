@@ -4,23 +4,38 @@
     </x-slot>
 
     <div class="space-y-5">
+        @if (session('success'))
+            <div class="rounded-lg bg-emerald-100 p-4 text-sm font-medium text-emerald-800 outline outline-1 outline-emerald-300">
+                {{ session('success') }}
+            </div>
+        @endif
+
         <div class="rounded-lg bg-slate-50 p-6 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] outline outline-1 outline-offset-[-1px] outline-stone-300">
-            <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
-                <div>
-                    <p class="text-xs font-semibold uppercase text-neutral-500">Fan/Mapel</p>
-                    <p class="mt-1 text-base font-medium text-zinc-900">{{ $assignment->subject->name }}</p>
+            <div class="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+                <div class="grid flex-1 grid-cols-2 gap-4 md:grid-cols-4">
+                    <div>
+                        <p class="text-xs font-semibold uppercase text-neutral-500">Fan/Mapel</p>
+                        <p class="mt-1 text-base font-medium text-zinc-900">{{ $assignment->subject->name }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-semibold uppercase text-neutral-500">Guru Pengampu</p>
+                        <p class="mt-1 text-base font-medium text-zinc-900">{{ $assignment->teacher->name }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-semibold uppercase text-neutral-500">Kelas</p>
+                        <p class="mt-1 text-base font-medium text-zinc-900">{{ $assignment->schoolClass->level->name }} {{ $assignment->schoolClass->name }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-semibold uppercase text-neutral-500">Tahun Ajaran</p>
+                        <p class="mt-1 text-base font-medium text-zinc-900">{{ $assignment->academicYear->name }} / {{ $assignment->semester->name }}</p>
+                    </div>
                 </div>
-                <div>
-                    <p class="text-xs font-semibold uppercase text-neutral-500">Guru Pengampu</p>
-                    <p class="mt-1 text-base font-medium text-zinc-900">{{ $assignment->teacher->name }}</p>
-                </div>
-                <div>
-                    <p class="text-xs font-semibold uppercase text-neutral-500">Kelas</p>
-                    <p class="mt-1 text-base font-medium text-zinc-900">{{ $assignment->schoolClass->level->name }} {{ $assignment->schoolClass->name }}</p>
-                </div>
-                <div>
-                    <p class="text-xs font-semibold uppercase text-neutral-500">Tahun Ajaran</p>
-                    <p class="mt-1 text-base font-medium text-zinc-900">{{ $assignment->academicYear->name }} / {{ $assignment->semester->name }}</p>
+
+                <div class="flex-shrink-0">
+                    <a href="{{ route('homeroom.grades.edit', $assignment) }}"
+                       class="inline-flex items-center justify-center rounded-sm bg-teal-950 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-emerald-900">
+                        <i class="bx bx-edit mr-2 text-base"></i> Input / Edit Nilai
+                    </a>
                 </div>
             </div>
         </div>
@@ -71,10 +86,14 @@
             </table>
         </div>
 
-        <div>
+        <div class="flex items-center gap-3">
             <a href="{{ route('homeroom.grades.index') }}"
                class="inline-flex items-center justify-center rounded-sm bg-slate-50 px-4 py-3 text-sm font-medium text-slate-600 outline outline-1 outline-neutral-500 transition hover:bg-slate-100">
                 Kembali
+            </a>
+            <a href="{{ route('homeroom.grades.edit', $assignment) }}"
+               class="inline-flex items-center justify-center rounded-sm bg-teal-950 px-4 py-3 text-sm font-medium text-white transition hover:bg-emerald-900">
+                Input / Edit Nilai
             </a>
         </div>
     </div>

@@ -165,10 +165,12 @@ return [
             'icon' => 'bx bx-book',
             'active_patterns' => [
                 'homeroom.journals.*',
+                'homeroom.grades.*',
                 'homeroom.attitudes.*',
                 'homeroom.report-cards.*',
             ],
             'children' => [
+                'monitoring_nilai' => ['label' => 'Monitoring Nilai Fan', 'route' => 'homeroom.grades.index', 'icon' => 'bx bx-notepad', 'active_patterns' => ['homeroom.grades.*']],
                 'jurnal_guru' => ['label' => 'Jurnal Guru', 'route' => 'homeroom.journals.index', 'icon' => 'bx bx-book-content', 'active_patterns' => ['homeroom.journals.*']],
                 'nilai_sikap' => ['label' => 'Nilai Sikap', 'route' => 'homeroom.attitudes.index', 'icon' => 'bx bx-notepad', 'active_patterns' => ['homeroom.attitudes.*']],
                 'raport_santri' => ['label' => 'Raport Santri', 'route' => 'homeroom.report-cards.index', 'icon' => 'bx bx-file', 'active_patterns' => ['homeroom.report-cards.*']],

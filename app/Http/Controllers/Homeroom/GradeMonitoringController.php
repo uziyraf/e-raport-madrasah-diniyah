@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Homeroom;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Homeroom\UpdateGradeRequest;
 use App\Models\Grade;
 use App\Models\HomeroomAssignment;
 use App\Models\StudentClassEnrollment;
@@ -59,6 +60,87 @@ class GradeMonitoringController extends Controller
 
     public function show(TeachingAssignment $teachingAssignment)
     {
+        $homeroom = $this->authorizeHomeroom($teachingAssignment);
+
+        $assignment = $teachingAssignment->loadMissing([
+            'teacher', 'subject', 'schoolClass.level', 'academicYear', 'semester',
+        ]);
+
+        $students = StudentClassEnrollment::with('student')
+            ->where('school_class_id', $assignment->school_class_id)
+            ->where('academic_year_id', $assignment->academic_year_id)
+            ->where('semester_id', $assignment->semester_id)
+            ->where('is_active', true)
+            ->orderBy('created_at')
+            ->get();
+
+        $existingGrades = Grade::where('teaching_assignment_id', $assignment->id)
+            ->get()
+            ->keyBy('student_id');
+
+        return view('homeroom.grades.show', compact(
+            'assignment', 'students', 'existingGrades', 'homeroom'
+        ));
+    }
+
+    public function edit(TeachingAssignment $teachingAssignment)
+    {
+        $homeroom = $this->authorizeHomeroom($teachingAssignment);
+
+        $assignment = $teachingAssignment->loadMissing([
+            'teacher', 'subject', 'schoolClass.level', 'academicYear', 'semester',
+        ]);
+
+        $students = StudentClassEnrollment::with('student')
+            ->where('school_class_id', $assignment->school_class_id)
+            ->where('academic_year_id', $assignment->academic_year_id)
+            ->where('semester_id', $assignment->semester_id)
+            ->where('is_active', true)
+            ->orderBy('created_at')
+            ->get();
+
+        $existingGrades = Grade::where('teaching_assignment_id', $assignment->id)
+            ->get()
+            ->keyBy('student_id');
+
+        return view('homeroom.grades.form', compact(
+            'assignment', 'students', 'existingGrades', 'homeroom'
+        ));
+    }
+
+    public function update(UpdateGradeRequest $request, TeachingAssignment $teachingAssignment)
+    {
+        $this->authorizeHomeroom($teachingAssignment);
+
+        $userId = Auth::id();
+
+        foreach ($request->grades as $gradeData) {
+            $data = [
+                'student_id' => $gradeData['student_id'],
+                'teaching_assignment_id' => $teachingAssignment->id,
+                'entered_by' => $userId,
+                'score' => $gradeData['score'] ?? null,
+                'predicate' => $gradeData['predicate'] ?? null,
+                'note' => $gradeData['note'] ?? null,
+                'status' => $gradeData['status'],
+                'submitted_at' => $gradeData['status'] === 'submitted' ? now() : null,
+            ];
+
+            Grade::updateOrCreate(
+                [
+                    'student_id' => $gradeData['student_id'],
+                    'teaching_assignment_id' => $teachingAssignment->id,
+                ],
+                $data
+            );
+        }
+
+        return redirect()->route('homeroom.grades.show', $teachingAssignment)
+            ->with('success', 'Nilai santri berhasil diperbarui oleh Wali Kelas.');
+    }
+
+    private function authorizeHomeroom(TeachingAssignment $teachingAssignment): HomeroomAssignment
+    {
         $teacher = Auth::user()->teacher;
 
         if (!$teacher) {
@@ -81,24 +163,6 @@ class GradeMonitoringController extends Controller
             abort(403, 'Penugasan ini tidak dalam kelas wali anda.');
         }
 
-        $assignment = $teachingAssignment->loadMissing([
-            'teacher', 'subject', 'schoolClass.level', 'academicYear', 'semester',
-        ]);
-
-        $students = StudentClassEnrollment::with('student')
-            ->where('school_class_id', $assignment->school_class_id)
-            ->where('academic_year_id', $assignment->academic_year_id)
-            ->where('semester_id', $assignment->semester_id)
-            ->where('is_active', true)
-            ->orderBy('created_at')
-            ->get();
-
-        $existingGrades = Grade::where('teaching_assignment_id', $assignment->id)
-            ->get()
-            ->keyBy('student_id');
-
-        return view('homeroom.grades.show', compact(
-            'assignment', 'students', 'existingGrades', 'homeroom'
-        ));
+        return $homeroom;
     }
 }
