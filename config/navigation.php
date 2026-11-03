@@ -159,6 +159,7 @@ return [
         'data_santri_kelas' => ['label' => 'Data Santri Kelas', 'route' => 'wali_kelas.students.index', 'icon' => 'bx bxs-user-rectangle', 'active_patterns' => ['wali_kelas.students.*']],
         'jadwal_kelas' => ['label' => 'Jadwal Kelas', 'route' => 'jadwal-pelajaran.index', 'icon' => 'bx bx-time', 'active_patterns' => ['jadwal-pelajaran.*']],
         'absensi_santri' => ['label' => 'Absensi Santri', 'route' => 'homeroom.attendances.index', 'icon' => 'bx bx-list-ul', 'active_patterns' => ['homeroom.attendances.*']],
+        'input_nilai_saya' => ['label' => 'Input Nilai Saya', 'route' => 'teacher.grades.index', 'icon' => 'bx bx-edit', 'active_patterns' => ['teacher.grades.*']],
 
         'akademik_kelas' => [
             'label' => 'Akademik Kelas',

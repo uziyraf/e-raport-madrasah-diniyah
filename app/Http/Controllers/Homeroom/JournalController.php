@@ -9,23 +9,26 @@ use App\Models\Student;
 use App\Models\StudentClassEnrollment;
 use App\Models\TeacherJournal;
 use App\Models\TeachingAssignment;
+use App\Services\TeachingAssignmentSyncService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class JournalController extends Controller
 {
+    public function __construct(private TeachingAssignmentSyncService $assignmentsSync) {}
+
     public function index()
     {
         $teacher = Auth::user()->teacher;
 
-        if (!$teacher) {
+        if (! $teacher) {
             abort(403, 'Anda tidak terdaftar sebagai guru.');
         }
 
         $homeroom = HomeroomAssignment::with(['schoolClass.level', 'academicYear', 'semester'])
             ->where('teacher_id', $teacher->id)
-            ->whereHas('academicYear', fn($q) => $q->where('is_active', true))
-            ->whereHas('semester', fn($q) => $q->where('is_active', true))
+            ->whereHas('academicYear', fn ($q) => $q->where('is_active', true))
+            ->whereHas('semester', fn ($q) => $q->where('is_active', true))
             ->first();
 
         $labels = [
@@ -71,20 +74,20 @@ class JournalController extends Controller
     {
         $teacher = Auth::user()->teacher;
 
-        if (!$teacher) {
+        if (! $teacher) {
             abort(403, 'Anda tidak terdaftar sebagai guru.');
         }
 
         $validTypes = ['hafalan', 'legalisir_kitab', 'nilai_harian', 'tamrinan', 'catatan'];
 
-        if (!in_array($journalType, $validTypes)) {
+        if (! in_array($journalType, $validTypes)) {
             abort(404);
         }
 
         $homeroom = HomeroomAssignment::with(['schoolClass.level', 'academicYear', 'semester'])
             ->where('teacher_id', $teacher->id)
-            ->whereHas('academicYear', fn($q) => $q->where('is_active', true))
-            ->whereHas('semester', fn($q) => $q->where('is_active', true))
+            ->whereHas('academicYear', fn ($q) => $q->where('is_active', true))
+            ->whereHas('semester', fn ($q) => $q->where('is_active', true))
             ->firstOrFail();
 
         $labels = [
@@ -128,20 +131,20 @@ class JournalController extends Controller
     {
         $teacher = Auth::user()->teacher;
 
-        if (!$teacher) {
+        if (! $teacher) {
             abort(403, 'Anda tidak terdaftar sebagai guru.');
         }
 
         $validTypes = ['hafalan', 'legalisir_kitab', 'nilai_harian', 'tamrinan', 'catatan'];
 
-        if (!in_array($journalType, $validTypes)) {
+        if (! in_array($journalType, $validTypes)) {
             abort(404);
         }
 
         $homeroom = HomeroomAssignment::with(['schoolClass.level', 'academicYear', 'semester'])
             ->where('teacher_id', $teacher->id)
-            ->whereHas('academicYear', fn($q) => $q->where('is_active', true))
-            ->whereHas('semester', fn($q) => $q->where('is_active', true))
+            ->whereHas('academicYear', fn ($q) => $q->where('is_active', true))
+            ->whereHas('semester', fn ($q) => $q->where('is_active', true))
             ->firstOrFail();
 
         $enrolled = StudentClassEnrollment::where('student_id', $student->id)
@@ -151,7 +154,7 @@ class JournalController extends Controller
             ->where('is_active', true)
             ->exists();
 
-        if (!$enrolled) {
+        if (! $enrolled) {
             abort(403, 'Santri ini tidak terdaftar di kelas wali anda.');
         }
 
@@ -182,20 +185,20 @@ class JournalController extends Controller
     {
         $teacher = Auth::user()->teacher;
 
-        if (!$teacher) {
+        if (! $teacher) {
             abort(403, 'Anda tidak terdaftar sebagai guru.');
         }
 
         $validTypes = ['hafalan', 'legalisir_kitab', 'nilai_harian', 'tamrinan', 'catatan'];
 
-        if (!in_array($journalType, $validTypes)) {
+        if (! in_array($journalType, $validTypes)) {
             abort(404);
         }
 
         $homeroom = HomeroomAssignment::with(['schoolClass.level', 'academicYear', 'semester'])
             ->where('teacher_id', $teacher->id)
-            ->whereHas('academicYear', fn($q) => $q->where('is_active', true))
-            ->whereHas('semester', fn($q) => $q->where('is_active', true))
+            ->whereHas('academicYear', fn ($q) => $q->where('is_active', true))
+            ->whereHas('semester', fn ($q) => $q->where('is_active', true))
             ->firstOrFail();
 
         $enrolled = StudentClassEnrollment::where('student_id', $student->id)
@@ -205,7 +208,7 @@ class JournalController extends Controller
             ->where('is_active', true)
             ->exists();
 
-        if (!$enrolled) {
+        if (! $enrolled) {
             abort(403, 'Santri ini tidak terdaftar di kelas wali anda.');
         }
 
@@ -217,10 +220,14 @@ class JournalController extends Controller
             'catatan' => 'Catatan',
         ];
 
+        $assignmentIds = $this->assignmentsSync->idsForClass(
+            $homeroom->school_class_id,
+            $homeroom->academic_year_id,
+            $homeroom->semester_id,
+        );
+
         $teachingAssignments = TeachingAssignment::with(['subject', 'schoolClass.level', 'academicYear', 'semester'])
-            ->where('school_class_id', $homeroom->school_class_id)
-            ->where('academic_year_id', $homeroom->academic_year_id)
-            ->where('semester_id', $homeroom->semester_id)
+            ->whereIn('id', $assignmentIds)
             ->orderBy('created_at')
             ->get();
 
@@ -233,13 +240,13 @@ class JournalController extends Controller
     {
         $teacher = Auth::user()->teacher;
 
-        if (!$teacher) {
+        if (! $teacher) {
             abort(403, 'Anda tidak terdaftar sebagai guru.');
         }
 
         $homeroom = HomeroomAssignment::where('teacher_id', $teacher->id)
-            ->whereHas('academicYear', fn($q) => $q->where('is_active', true))
-            ->whereHas('semester', fn($q) => $q->where('is_active', true))
+            ->whereHas('academicYear', fn ($q) => $q->where('is_active', true))
+            ->whereHas('semester', fn ($q) => $q->where('is_active', true))
             ->firstOrFail();
 
         $enrolled = StudentClassEnrollment::where('student_id', $request->student_id)
@@ -249,8 +256,20 @@ class JournalController extends Controller
             ->where('is_active', true)
             ->exists();
 
-        if (!$enrolled) {
+        if (! $enrolled) {
             abort(403, 'Santri ini tidak terdaftar di kelas wali anda.');
+        }
+
+        if ($request->filled('teaching_assignment_id')) {
+            $allowedAssignmentIds = $this->assignmentsSync->idsForClass(
+                $homeroom->school_class_id,
+                $homeroom->academic_year_id,
+                $homeroom->semester_id,
+            );
+
+            if (! in_array((int) $request->teaching_assignment_id, $allowedAssignmentIds, true)) {
+                abort(403, 'Fan/Mapel tidak terdaftar di jadwal pelajaran kelas ini.');
+            }
         }
 
         TeacherJournal::create([
@@ -286,7 +305,7 @@ class JournalController extends Controller
     {
         $teacher = Auth::user()->teacher;
 
-        if (!$teacher) {
+        if (! $teacher) {
             abort(403, 'Anda tidak terdaftar sebagai guru.');
         }
 
@@ -296,7 +315,7 @@ class JournalController extends Controller
             ->where('semester_id', $teacherJournal->semester_id)
             ->first();
 
-        if ($teacherJournal->teacher_id !== $teacher->id && !$homeroom) {
+        if ($teacherJournal->teacher_id !== $teacher->id && ! $homeroom) {
             abort(403, 'Anda tidak memiliki akses ke jurnal ini.');
         }
 
@@ -319,7 +338,7 @@ class JournalController extends Controller
     {
         $teacher = Auth::user()->teacher;
 
-        if (!$teacher) {
+        if (! $teacher) {
             abort(403, 'Anda tidak terdaftar sebagai guru.');
         }
 
@@ -329,7 +348,7 @@ class JournalController extends Controller
             ->where('semester_id', $teacherJournal->semester_id)
             ->first();
 
-        if ($teacherJournal->teacher_id !== $teacher->id && !$homeroom) {
+        if ($teacherJournal->teacher_id !== $teacher->id && ! $homeroom) {
             abort(403, 'Anda tidak memiliki akses ke jurnal ini.');
         }
 
@@ -345,10 +364,14 @@ class JournalController extends Controller
             'catatan' => 'Catatan',
         ];
 
+        $assignmentIds = $this->assignmentsSync->idsForClass(
+            $teacherJournal->school_class_id,
+            $teacherJournal->academic_year_id,
+            $teacherJournal->semester_id,
+        );
+
         $teachingAssignments = TeachingAssignment::with(['subject', 'schoolClass.level', 'academicYear', 'semester'])
-            ->where('school_class_id', $teacherJournal->school_class_id)
-            ->where('academic_year_id', $teacherJournal->academic_year_id)
-            ->where('semester_id', $teacherJournal->semester_id)
+            ->whereIn('id', $assignmentIds)
             ->orderBy('created_at')
             ->get();
 
@@ -359,7 +382,7 @@ class JournalController extends Controller
     {
         $teacher = Auth::user()->teacher;
 
-        if (!$teacher) {
+        if (! $teacher) {
             abort(403, 'Anda tidak terdaftar sebagai guru.');
         }
 
@@ -369,7 +392,7 @@ class JournalController extends Controller
             ->where('semester_id', $teacherJournal->semester_id)
             ->first();
 
-        if ($teacherJournal->teacher_id !== $teacher->id && !$homeroom) {
+        if ($teacherJournal->teacher_id !== $teacher->id && ! $homeroom) {
             abort(403, 'Anda tidak memiliki akses ke jurnal ini.');
         }
 
@@ -389,13 +412,17 @@ class JournalController extends Controller
         ];
 
         if ($request->filled('teaching_assignment_id')) {
-            $assignment = TeachingAssignment::where('school_class_id', $teacherJournal->school_class_id)
-                ->where('academic_year_id', $teacherJournal->academic_year_id)
-                ->where('semester_id', $teacherJournal->semester_id)
+            $allowedAssignmentIds = $this->assignmentsSync->idsForClass(
+                $teacherJournal->school_class_id,
+                $teacherJournal->academic_year_id,
+                $teacherJournal->semester_id,
+            );
+
+            $assignment = TeachingAssignment::whereIn('id', $allowedAssignmentIds)
                 ->find($request->teaching_assignment_id);
 
-            if (!$assignment) {
-                abort(403, 'Penugasan mengajar tidak valid.');
+            if (! $assignment) {
+                abort(403, 'Fan/Mapel tidak terdaftar di jadwal pelajaran kelas ini.');
             }
 
             $data['teaching_assignment_id'] = $assignment->id;
@@ -413,7 +440,7 @@ class JournalController extends Controller
     {
         $teacher = Auth::user()->teacher;
 
-        if (!$teacher) {
+        if (! $teacher) {
             abort(403, 'Anda tidak terdaftar sebagai guru.');
         }
 
@@ -423,7 +450,7 @@ class JournalController extends Controller
             ->where('semester_id', $teacherJournal->semester_id)
             ->first();
 
-        if ($teacherJournal->teacher_id !== $teacher->id && !$homeroom) {
+        if ($teacherJournal->teacher_id !== $teacher->id && ! $homeroom) {
             abort(403, 'Anda tidak memiliki akses ke jurnal ini.');
         }
 
