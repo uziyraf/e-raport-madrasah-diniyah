@@ -2,6 +2,63 @@
     $userRole = auth()->user()->getRoleNames()->first();
     $navigation = config('navigation.' . $userRole, []);
     $currentRoute = Route::currentRouteName();
+
+    function menuRouteExists($route)
+    {
+        return $route && Route::has($route);
+    }
+
+    function isMenuActive($item, $currentRoute)
+    {
+        if (isset($item['route']) && $item['route'] === $currentRoute) {
+            return true;
+        }
+        if (isset($item['active_patterns'])) {
+            foreach ($item['active_patterns'] as $pattern) {
+                if (Str::is($pattern, $currentRoute)) {
+                    return true;
+                }
+            }
+        }
+        if (isset($item['children'])) {
+            foreach ($item['children'] as $child) {
+                if (isMenuActive($child, $currentRoute)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    function collectMenuRoutes($item)
+    {
+        $routes = [];
+        if (isset($item['route']) && $item['route']) {
+            $routes[] = $item['route'];
+        }
+        if (isset($item['children'])) {
+            foreach ($item['children'] as $child) {
+                $routes = array_merge($routes, collectMenuRoutes($child));
+            }
+        }
+        return $routes;
+    }
+
+    function countVisibleChildren($item)
+    {
+        if (!isset($item['children'])) {
+            return 0;
+        }
+        $count = 0;
+        foreach ($item['children'] as $child) {
+            $hasRoute = menuRouteExists($child['route'] ?? null);
+            $hasChildren = isset($child['children']);
+            if ($hasRoute || $hasChildren) {
+                $count++;
+            }
+        }
+        return $count;
+    }
 @endphp
 
 {{-- Mobile overlay --}}
@@ -15,7 +72,7 @@
         <div class="mb-6 flex items-start justify-between px-3">
             <div>
                 <p class="text-xs font-semibold uppercase tracking-wide text-orange-300">
-                    SIRAFAH
+                    MISRIU
                 </p>
 
                 <h1 class="mt-1 text-xl font-bold text-white">
@@ -36,58 +93,116 @@
         </div>
 
         <nav class="flex-1 overflow-y-auto">
-            <ul class="space-y-2">
+            <ul class="space-y-1">
                 @forelse ($navigation as $key => $item)
-                    @if (isset($item['children']))
-                        @php
-                            $childRoutes = collect($item['children'])->pluck('route')->filter(fn($r) => Route::has($r))->toArray();
-                            $isParentActive = in_array($currentRoute, $childRoutes);
-                            $hasAnyChildRoute = !empty($childRoutes);
-                        @endphp
-                        <li x-data="{ open: {{ $isParentActive ? 'true' : 'false' }} }">
+                    @php
+                        $isParent = isset($item['children']);
+                        $isActive = isMenuActive($item, $currentRoute);
+                        $visibleChildren = $isParent ? countVisibleChildren($item) : 0;
+                        $hasVisibleContent = $visibleChildren > 0 || !$isParent;
+                    @endphp
+
+                    @if (!$hasVisibleContent)
+                        @continue
+                    @endif
+
+                    @if ($isParent)
+                        <li x-data="{ open: {{ $isActive ? 'true' : 'false' }} }">
                             <button type="button" @click="open = !open"
                                 class="group flex w-full items-center rounded-lg border-l-4 px-3 py-3 text-sm font-medium transition
-                                    {{ $isParentActive ? 'border-orange-300 bg-emerald-900 text-white' : 'border-transparent text-slate-50 hover:border-orange-300 hover:bg-emerald-900 hover:text-white' }}
-                                    {{ !$hasAnyChildRoute ? 'cursor-not-allowed opacity-50' : '' }}">
+                                                            {{ $isActive ? 'border-orange-300 bg-emerald-900 text-white' : 'border-transparent text-slate-50 hover:border-orange-300 hover:bg-emerald-900 hover:text-white' }}">
                                 <i class="{{ $item['icon'] ?? 'bx bx-circle' }} mr-3 text-lg"></i>
                                 <span class="flex-1 whitespace-normal text-left leading-snug">
                                     {{ $item['label'] }}
                                 </span>
-                                @if ($hasAnyChildRoute)
-                                    <i class="bx bx-chevron-down text-lg transition-transform duration-200"
-                                       :class="open ? 'rotate-180' : ''"></i>
-                                @endif
+                                <i class="bx bx-chevron-down text-lg transition-transform duration-200"
+                                    :class="open ? 'rotate-180' : ''"></i>
                             </button>
 
-                            @if ($hasAnyChildRoute)
-                                <ul x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="ml-4 mt-1 space-y-1 border-l border-teal-700 pl-3">
-                                    @foreach ($item['children'] as $childKey => $child)
+                            <ul x-show="open" x-transition:enter="transition ease-out duration-200"
+                                x-transition:enter-start="opacity-0 -translate-y-2"
+                                x-transition:enter-end="opacity-100 translate-y-0"
+                                class="ml-4 mt-1 space-y-1 border-l border-teal-700 pl-3">
+                                @foreach ($item['children'] as $childKey => $child)
+                                    @php
+                                        $childIsParent = isset($child['children']);
+                                        $childIsActive = isMenuActive($child, $currentRoute);
+                                        $childHasRoute = menuRouteExists($child['route'] ?? null);
+                                        $childVisibleChildren = $childIsParent ? countVisibleChildren($child) : 0;
+                                        $childHasVisibleContent = $childVisibleChildren > 0 || $childHasRoute;
+                                    @endphp
+
+                                    @if (!$childHasVisibleContent)
+                                        @continue
+                                    @endif
+
+                                    @if ($childIsParent)
+                                        <li x-data="{ childOpen: {{ $childIsActive ? 'true' : 'false' }} }">
+                                            <button type="button" @click="childOpen = !childOpen"
+                                                class="group flex w-full items-center rounded-lg px-3 py-2 text-sm font-medium transition
+                                                                                                    {{ $childIsActive ? 'bg-emerald-900 text-white' : 'text-slate-300 hover:bg-emerald-900 hover:text-white' }}">
+                                                <i class="{{ $child['icon'] ?? 'bx bx-circle' }} mr-2 text-base"></i>
+                                                <span
+                                                    class="flex-1 whitespace-normal text-left leading-snug">{{ $child['label'] }}</span>
+                                                <i class="bx bx-chevron-down text-base transition-transform duration-200"
+                                                    :class="childOpen ? 'rotate-180' : ''"></i>
+                                            </button>
+
+                                            <ul x-show="childOpen" x-transition:enter="transition ease-out duration-200"
+                                                x-transition:enter-start="opacity-0 -translate-y-2"
+                                                x-transition:enter-end="opacity-100 translate-y-0"
+                                                class="ml-4 mt-1 space-y-1 border-l border-teal-700 pl-3">
+                                                @foreach ($child['children'] as $grandchildKey => $grandchild)
+                                                    @php
+                                                        $gcRoute = $grandchild['route'] ?? null;
+                                                        $gcRouteExists = menuRouteExists($gcRoute);
+                                                        $gcIsActive = isMenuActive($grandchild, $currentRoute);
+                                                    @endphp
+
+                                                    @if (!$gcRouteExists)
+                                                        @continue
+                                                    @endif
+
+                                                    <li>
+                                                        <a href="{{ route($gcRoute) }}" @click="sidebarOpen = false"
+                                                            class="group flex items-center rounded-lg px-3 py-2 text-sm font-medium transition
+                                                                                                                            {{ $gcIsActive ? 'bg-teal-800/60 text-orange-200' : 'text-slate-400 hover:bg-teal-800/60 hover:text-white' }}">
+                                                            <i class="{{ $grandchild['icon'] ?? 'bx bx-circle' }} mr-2 text-base"></i>
+                                                            <span class="whitespace-normal leading-snug">{{ $grandchild['label'] }}</span>
+                                                        </a>
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        </li>
+                                    @else
                                         @php
                                             $childRoute = $child['route'] ?? null;
-                                            $childRouteExists = $childRoute && Route::has($childRoute);
+                                            $childRouteExists = menuRouteExists($childRoute);
                                             $childHref = $childRouteExists ? route($childRoute) : '#';
-                                            $isChildActive = $childRouteExists && $currentRoute === $childRoute;
                                         @endphp
+
                                         <li>
-                                            <a href="{{ $childHref }}"
-                                               @if ($childRouteExists) @click="sidebarOpen = false" @endif
-                                               class="group flex items-center rounded-lg px-3 py-2 text-sm font-medium transition
-                                                    {{ $isChildActive ? 'bg-emerald-900 text-white' : 'text-slate-300 hover:bg-emerald-900 hover:text-white' }}
-                                                    {{ !$childRouteExists ? 'cursor-not-allowed opacity-50' : '' }}">
+                                            <a href="{{ $childHref }}" @if ($childRouteExists) @click="sidebarOpen = false" @endif
+                                                class="group flex items-center rounded-lg px-3 py-2 text-sm font-medium transition
+                                                                                                    {{ $childIsActive ? 'bg-emerald-900 text-white' : 'text-slate-300 hover:bg-emerald-900 hover:text-white' }}
+                                                                                                    {{ !$childRouteExists ? 'cursor-not-allowed opacity-50' : '' }}">
                                                 <i class="{{ $child['icon'] ?? 'bx bx-circle' }} mr-2 text-base"></i>
                                                 <span class="whitespace-normal leading-snug">{{ $child['label'] }}</span>
+                                                @if (!$childRouteExists)
+                                                    <span class="ml-auto text-xs text-slate-500">(segera)</span>
+                                                @endif
                                             </a>
                                         </li>
-                                    @endforeach
-                                </ul>
-                            @endif
+                                    @endif
+                                @endforeach
+                            </ul>
                         </li>
                     @else
                         @php
                             $routeName = $item['route'] ?? null;
-                            $routeExists = $routeName && Route::has($routeName);
+                            $routeExists = menuRouteExists($routeName);
                             $href = $routeExists ? route($routeName) : '#';
-                            $isActive = $routeExists && $currentRoute === $routeName;
+                            $isActive = isMenuActive($item, $currentRoute);
 
                             $linkClasses = 'group flex items-center rounded-lg border-l-4 px-3 py-3 text-sm font-medium transition';
 

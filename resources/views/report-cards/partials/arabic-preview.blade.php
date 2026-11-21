@@ -3,7 +3,7 @@
     $schoolClass = $reportData['schoolClass'];
     $academicYear = $reportData['academicYear'];
     $semester = $reportData['semester'];
-    $subjectRows = $reportData['subjectRows'];
+    $subjectRows = $reportData['subjectRows'];  
     $totalScore = $reportData['totalScore'];
     $average = $reportData['average'];
     $attitude = $reportData['attitude'];

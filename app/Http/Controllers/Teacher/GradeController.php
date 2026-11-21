@@ -7,26 +7,35 @@ use App\Http\Requests\Teacher\StoreGradeRequest;
 use App\Models\Grade;
 use App\Models\StudentClassEnrollment;
 use App\Models\TeachingAssignment;
+use App\Services\TeachingAssignmentSyncService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class GradeController extends Controller
 {
+    public function __construct(private TeachingAssignmentSyncService $assignmentsSync) {}
+
     public function index()
     {
         $teacher = Auth::user()->teacher;
 
-        if (!$teacher) {
+        if (! $teacher) {
             abort(403, 'Anda tidak terdaftar sebagai guru.');
         }
+
+        $assignmentIds = $this->assignmentsSync->idsForTeacher(
+            $teacher->id,
+            $this->assignmentsSync->activeAcademicYearId(),
+            $this->assignmentsSync->activeSemesterId(),
+        );
 
         $assignments = TeachingAssignment::with([
             'subject', 'schoolClass.level', 'academicYear', 'semester',
         ])
             ->withCount([
                 'grades',
-                'grades as draft_grades_count' => fn($q) => $q->where('status', 'draft'),
-                'grades as submitted_grades_count' => fn($q) => $q->where('status', 'submitted'),
+                'grades as draft_grades_count' => fn ($q) => $q->where('status', 'draft'),
+                'grades as submitted_grades_count' => fn ($q) => $q->where('status', 'submitted'),
             ])
             ->addSelect([
                 'enrolled_students_count' => StudentClassEnrollment::selectRaw('COUNT(*)')
@@ -35,9 +44,7 @@ class GradeController extends Controller
                     ->whereColumn('semester_id', 'teaching_assignments.semester_id')
                     ->where('is_active', true),
             ])
-            ->where('teacher_id', $teacher->id)
-            ->whereHas('academicYear', fn($q) => $q->where('is_active', true))
-            ->whereHas('semester', fn($q) => $q->where('is_active', true))
+            ->whereIn('id', $assignmentIds)
             ->orderByDesc('created_at')
             ->paginate(10);
 
@@ -48,16 +55,20 @@ class GradeController extends Controller
     {
         $teacher = Auth::user()->teacher;
 
-        if (!$teacher) {
+        if (! $teacher) {
             abort(403, 'Anda tidak terdaftar sebagai guru.');
         }
+
+        $assignmentIds = $this->assignmentsSync->idsForTeacher(
+            $teacher->id,
+            $this->assignmentsSync->activeAcademicYearId(),
+            $this->assignmentsSync->activeSemesterId(),
+        );
 
         $assignments = TeachingAssignment::with([
             'subject', 'schoolClass.level', 'academicYear', 'semester',
         ])
-            ->where('teacher_id', $teacher->id)
-            ->whereHas('academicYear', fn($q) => $q->where('is_active', true))
-            ->whereHas('semester', fn($q) => $q->where('is_active', true))
+            ->whereIn('id', $assignmentIds)
             ->orderByDesc('created_at')
             ->get();
 
@@ -92,7 +103,7 @@ class GradeController extends Controller
     {
         $teacher = Auth::user()->teacher;
 
-        if (!$teacher) {
+        if (! $teacher) {
             abort(403, 'Anda tidak terdaftar sebagai guru.');
         }
 
@@ -100,6 +111,10 @@ class GradeController extends Controller
 
         if ($assignment->teacher_id !== $teacher->id) {
             abort(403, 'Anda tidak memiliki akses ke penugasan ini.');
+        }
+
+        if (! $this->assignmentsSync->isFromJadwal($assignment)) {
+            abort(403, 'Penugasan ini tidak terdaftar di jadwal pelajaran.');
         }
 
         $userId = Auth::id();
@@ -133,12 +148,16 @@ class GradeController extends Controller
     {
         $teacher = Auth::user()->teacher;
 
-        if (!$teacher) {
+        if (! $teacher) {
             abort(403, 'Anda tidak terdaftar sebagai guru.');
         }
 
         if ($teachingAssignment->teacher_id !== $teacher->id) {
             abort(403, 'Anda tidak memiliki akses ke penugasan ini.');
+        }
+
+        if (! $this->assignmentsSync->isFromJadwal($teachingAssignment)) {
+            abort(403, 'Penugasan ini tidak terdaftar di jadwal pelajaran.');
         }
 
         $assignment = $teachingAssignment->loadMissing([
@@ -166,12 +185,16 @@ class GradeController extends Controller
     {
         $teacher = Auth::user()->teacher;
 
-        if (!$teacher) {
+        if (! $teacher) {
             abort(403, 'Anda tidak terdaftar sebagai guru.');
         }
 
         if ($teachingAssignment->teacher_id !== $teacher->id) {
             abort(403, 'Anda tidak memiliki akses ke penugasan ini.');
+        }
+
+        if (! $this->assignmentsSync->isFromJadwal($teachingAssignment)) {
+            abort(403, 'Penugasan ini tidak terdaftar di jadwal pelajaran.');
         }
 
         $userId = Auth::id();

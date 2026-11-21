@@ -6,12 +6,15 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreAcademicYearRequest;
 use App\Http\Requests\Admin\UpdateAcademicYearRequest;
 use App\Models\AcademicYear;
+use App\Models\Semester;
+use Carbon\Carbon;
 
 class AcademicYearController extends Controller
 {
     public function index()
     {
         $academicYears = AcademicYear::orderBy('start_date', 'desc')->paginate(10);
+
         return view('admin.academic-years.index', compact('academicYears'));
     }
 
@@ -26,11 +29,29 @@ class AcademicYearController extends Controller
 
         if ($data['is_active'] ?? false) {
             AcademicYear::where('is_active', true)->update(['is_active' => false]);
+            Semester::where('is_active', true)->update(['is_active' => false]);
         }
 
-        AcademicYear::create($data);
+        $academicYear = AcademicYear::create($data);
 
-        return redirect()->route('admin.academic-years.index')->with('success', 'Tahun ajaran berhasil ditambahkan.');
+        $startDate = isset($data['start_date']) ? Carbon::parse($data['start_date']) : null;
+        $endDate = isset($data['end_date']) ? Carbon::parse($data['end_date']) : null;
+
+        // Semester Ganjil sampai 31 Desember dari tahun mulai
+        $ganjilEnd = $startDate ? $startDate->copy()->month(12)->endOfMonth() : null;
+        // Semester Genap mulai 1 Januari (sehari setelah Ganjil berakhir)
+        $genapStart = $ganjilEnd ? $ganjilEnd->copy()->addDay() : null;
+
+        // Otomatis membuat 1 semester saja (sesuai semester aktif yang dipilih)
+        // Semester berikutnya dibuat terpisah lewat menu Semester.
+        $academicYear->semesters()->create([
+            'name' => $data['active_semester'],
+            'start_date' => $data['active_semester'] === 'Genap' ? $genapStart?->format('Y-m-d') : $startDate?->format('Y-m-d'),
+            'end_date' => $data['active_semester'] === 'Genap' ? $endDate?->format('Y-m-d') : $ganjilEnd?->format('Y-m-d'),
+            'is_active' => $data['is_active'] ?? false,
+        ]);
+
+        return redirect()->route('admin.academic-years.index')->with('success', 'Tahun ajaran berhasil ditambahkan (Semester '.$data['active_semester'].' juga dibuat otomatis).');
     }
 
     public function edit(AcademicYear $academicYear)
@@ -42,11 +63,21 @@ class AcademicYearController extends Controller
     {
         $data = $request->validated();
 
-        if (($data['is_active'] ?? false) && !$academicYear->is_active) {
+        if (($data['is_active'] ?? false) && ! $academicYear->is_active) {
             AcademicYear::where('is_active', true)->update(['is_active' => false]);
         }
 
+        if ($data['is_active'] ?? false) {
+            Semester::where('is_active', true)
+                ->where('academic_year_id', '!=', $academicYear->id)
+                ->update(['is_active' => false]);
+        }
+
         $academicYear->update($data);
+
+        if (($data['is_active'] ?? false) && ! $academicYear->semesters()->where('is_active', true)->exists()) {
+            $academicYear->semesters()->orderBy('start_date')->first()?->update(['is_active' => true]);
+        }
 
         return redirect()->route('admin.academic-years.index')->with('success', 'Tahun ajaran berhasil diperbarui.');
     }
@@ -54,6 +85,8 @@ class AcademicYearController extends Controller
     public function destroy(AcademicYear $academicYear)
     {
         $academicYear->update(['is_active' => false]);
+        $academicYear->semesters()->update(['is_active' => false]);
+
         return redirect()->route('admin.academic-years.index')->with('success', 'Tahun ajaran berhasil dinonaktifkan.');
     }
 }

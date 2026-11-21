@@ -13,7 +13,7 @@
 
         <div>
             <p class="text-xs font-semibold uppercase tracking-wide text-orange-700">
-                SIRAFAH
+                MISRIU
             </p>
 
             <span class="block text-sm font-semibold text-teal-950 md:text-lg">
