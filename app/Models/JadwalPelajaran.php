@@ -23,6 +23,11 @@ class JadwalPelajaran extends Model
         'created_by',
     ];
 
+    public static function days(): array
+    {
+        return ['Sabtu', 'Ahad', 'Senin', 'Selasa', 'Rabu', 'Jumat'];
+    }
+
     public function tahunAjaran(): BelongsTo
     {
         return $this->belongsTo(AcademicYear::class, 'tahun_ajaran_id');

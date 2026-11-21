@@ -17,7 +17,7 @@ Kolom:
 - SENIN
 - SELASA
 - RABU
-- KAMIS
+- JUMAT
 
 ## Struktur Baris
 
@@ -67,7 +67,9 @@ Urutan hari:
 3. Senin
 4. Selasa
 5. Rabu
-6. Kamis
+6. Jumat
+
+Catatan: Kamis adalah hari libur, sehingga tidak dipakai untuk jadwal pelajaran.
 
 ## Target Halaman
 

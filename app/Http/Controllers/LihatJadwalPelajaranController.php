@@ -90,7 +90,7 @@ class LihatJadwalPelajaranController extends Controller
         $semesters = Semester::orderByDesc('start_date')->pluck('name', 'id');
         $teachers = Teacher::active()->orderBy('name')->pluck('name', 'id');
         $subjects = Subject::orderBy('name')->pluck('name', 'id');
-        $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        $days = JadwalPelajaran::days();
 
         return view('jadwal-pelajaran.index', compact(
             'jadwals', 'academicYears', 'semesters', 'schoolClasses', 'teachers', 'subjects', 'days', 'info', 'role',

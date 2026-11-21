@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Models\JadwalPelajaran;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 
 class UpdateJadwalPelajaranRequest extends FormRequest
@@ -20,7 +22,7 @@ class UpdateJadwalPelajaranRequest extends FormRequest
             'kelas_id' => ['required', 'exists:school_classes,id'],
             'mapel_id' => ['required', 'exists:subjects,id'],
             'guru_id' => ['required', 'exists:teachers,id'],
-            'hari' => ['required', 'string', 'in:Senin,Selasa,Rabu,Kamis,Jumat,Sabtu'],
+            'hari' => ['required', 'string', Rule::in(JadwalPelajaran::days())],
             'jam_mulai' => ['required', 'date_format:H:i'],
             'jam_selesai' => ['required', 'date_format:H:i', 'after:jam_mulai'],
             'keterangan' => ['nullable', 'string', 'max:1000'],
@@ -31,7 +33,7 @@ class UpdateJadwalPelajaranRequest extends FormRequest
     {
         return [
             'jam_selesai.after' => 'Jam selesai harus lebih besar dari jam mulai.',
-            'hari.in' => 'Hari tidak valid. Pilih: Senin, Selasa, Rabu, Kamis, Jumat, Sabtu.',
+            'hari.in' => 'Hari tidak valid. Pilih: Sabtu, Ahad, Senin, Selasa, Rabu, Jumat.',
         ];
     }
 

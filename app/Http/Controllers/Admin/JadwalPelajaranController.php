@@ -37,7 +37,7 @@ class JadwalPelajaranController extends Controller
         $classIds = $jadwalByClass->keys();
         $classes = SchoolClass::whereIn('id', $classIds)->with('level')->orderBy('sort_order')->get();
 
-        $days = ['Sabtu', 'Ahad', 'Senin', 'Selasa', 'Rabu', 'Kamis'];
+        $days = JadwalPelajaran::days();
 
         return view('admin.jadwal-pelajaran.template', compact(
             'jadwalByClass', 'classes', 'days', 'activeAcademicYear', 'activeSemester'
@@ -56,7 +56,7 @@ class JadwalPelajaranController extends Controller
             ->mapWithKeys(fn($c) => [$c->id => $c->level->name . ' - ' . $c->name]);
         $teachers = Teacher::active()->orderBy('name')->pluck('name', 'id');
         $subjects = Subject::orderBy('name')->pluck('name', 'id');
-        $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        $days = JadwalPelajaran::days();
 
         return view('admin.jadwal-pelajaran.index', compact(
             'jadwals', 'academicYears', 'semesters', 'schoolClasses', 'teachers', 'subjects', 'days',
@@ -71,7 +71,7 @@ class JadwalPelajaranController extends Controller
             ->mapWithKeys(fn($c) => [$c->id => $c->level->name . ' - ' . $c->name]);
         $teachers = Teacher::active()->orderBy('name')->pluck('name', 'id');
         $subjects = Subject::orderBy('name')->pluck('name', 'id');
-        $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        $days = JadwalPelajaran::days();
 
         return view('admin.jadwal-pelajaran.create', compact(
             'academicYears', 'semesters', 'schoolClasses', 'teachers', 'subjects', 'days',
@@ -101,7 +101,7 @@ class JadwalPelajaranController extends Controller
             ->mapWithKeys(fn($c) => [$c->id => $c->level->name . ' - ' . $c->name]);
         $teachers = Teacher::active()->orderBy('name')->pluck('name', 'id');
         $subjects = Subject::orderBy('name')->pluck('name', 'id');
-        $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        $days = JadwalPelajaran::days();
 
         return view('admin.jadwal-pelajaran.edit', compact(
             'jadwal', 'academicYears', 'semesters', 'schoolClasses', 'teachers', 'subjects', 'days',
