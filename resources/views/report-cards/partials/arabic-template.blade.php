@@ -20,8 +20,8 @@
 
     $studentArabicName = $student->arabic_name ?: $student->name;
     $className = trim(($schoolClass->level->name ?? '') . ' ' . $schoolClass->name);
-    $principalName = $principal ? ($principal->arabic_name ?: $principal->name) : '-';
-    $homeroomName = $homeroom ? ($homeroom->arabic_name ?: $homeroom->name) : 'الأستاذ / الأستاذة';
+    $principalName = $principal?->arabic_name ?: 'Nama Arab tidak ditemukan';
+    $homeroomName = $homeroom?->arabic_name ?: 'Nama Arab tidak ditemukan';
 
     $isMale = ($student->gender ?? null) === 'male';
     $studentLabel = $isMale ? 'اسم الطالب' : 'اسم الطالبة';
@@ -238,8 +238,8 @@
             <td colspan="4"><span class="bold">{{ $studentLabel }}:</span> {{ $studentArabicName }}</td>
             <td rowspan="3" class="year-cell">
                 <div>السنة الدراسية</div>
-                <div>{{ $year($hijriYear) }} هـ</div>
-                <div>{{ $year($masehiYear) }} م</div>
+                <div>{{ $year($hijriYear) }}</div>
+                <div>{{ $year($masehiYear) }}</div>
             </td>
         </tr>
         <tr class="r-id">

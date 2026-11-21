@@ -128,16 +128,16 @@ class ReportCardService
 
         $homeroomTeacher = $homeroomAssignment?->teacher;
 
-        $principal = User::whereHas('roles', function ($q) {
-            $q->where('name', 'kepala_sekolah');
+        $principal = Teacher::whereHas('user', function ($q) {
+            $q->whereHas('roles', function ($r) {
+                $r->where('name', 'kepala_sekolah');
+            });
         })->first();
 
-        if (!$principal) {
-            $principal = Teacher::whereHas('user', function ($q) {
-                $q->whereHas('roles', function ($r) {
-                    $r->where('name', 'kepala_sekolah');
-                });
-            })->first();
+        if (! $principal) {
+            $principal = User::whereHas('roles', function ($q) {
+                $q->where('name', 'kepala_sekolah');
+            })->first()?->teacher;
         }
 
         $rank = $this->calculateRank($student, $schoolClass, $academicYear, $semester);
