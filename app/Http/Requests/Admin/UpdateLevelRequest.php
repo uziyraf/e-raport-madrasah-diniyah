@@ -16,6 +16,7 @@ class UpdateLevelRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
+            'arabic_name' => ['nullable', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:255'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
             'status' => ['required', 'string', 'in:active,inactive'],
