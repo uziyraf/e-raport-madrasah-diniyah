@@ -17,6 +17,18 @@ class Level extends Model
         'status',
     ];
 
+    public const ARABIC_NAMES = [
+        "I'dadiyah" => 'الإعدادية',
+        "Ibtida'iyah" => 'الابتدائية',
+        'Tsanawiyah' => 'الثانوية',
+        'Aliyah' => 'العالية',
+    ];
+
+    public function arabicName(): string
+    {
+        return $this->arabic_name ?: (self::ARABIC_NAMES[$this->name] ?? $this->name);
+    }
+
     public function schoolClasses(): HasMany
     {
         return $this->hasMany(SchoolClass::class);

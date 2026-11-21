@@ -39,7 +39,8 @@
                                 {{ $loop->iteration }}
                             </td>
                             <td class="border border-stone-400 px-3 py-2 align-top text-sm font-bold text-neutral-800">
-                                {{ $class->level->name }} {{ $class->name }}
+                                <div>{{ $class->level->name }} {{ $class->name }}</div>
+                                <div class="mt-0.5 text-sm font-bold" dir="rtl">{{ $class->arabicName() }}</div>
                             </td>
                             @foreach ($days as $day)
                                 @php
