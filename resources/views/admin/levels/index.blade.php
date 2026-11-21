@@ -23,6 +23,7 @@
                 <thead>
                     <tr>
                         <th class="border-b border-stone-300 bg-white px-6 py-4 text-left text-sm font-medium text-neutral-700">Nama</th>
+                        <th class="border-b border-stone-300 bg-white px-6 py-4 text-left text-sm font-medium text-neutral-700">Nama Arab</th>
                         <th class="border-b border-stone-300 bg-white px-6 py-4 text-left text-sm font-medium text-neutral-700">Deskripsi</th>
                         <th class="border-b border-stone-300 bg-white px-6 py-4 text-left text-sm font-medium text-neutral-700">Urutan</th>
                         <th class="border-b border-stone-300 bg-white px-6 py-4 text-left text-sm font-medium text-neutral-700">Status</th>
@@ -33,6 +34,7 @@
                     @forelse ($levels as $level)
                         <tr>
                             <td class="border-t border-stone-300 px-6 py-4 text-base font-normal text-zinc-900">{{ $level->name }}</td>
+                            <td class="border-t border-stone-300 px-6 py-4 text-base font-normal text-zinc-900" dir="rtl">{{ $level->arabic_name ?? '-' }}</td>
                             <td class="border-t border-stone-300 px-6 py-4 text-base font-normal text-zinc-900">{{ $level->description ?? '-' }}</td>
                             <td class="border-t border-stone-300 px-6 py-4 text-base font-normal text-zinc-900">{{ $level->sort_order }}</td>
                             <td class="border-t border-stone-300 px-6 py-4">
@@ -61,7 +63,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-10 text-center text-sm text-neutral-500">Belum ada data jenjang.</td>
+                            <td colspan="6" class="px-6 py-10 text-center text-sm text-neutral-500">Belum ada data jenjang.</td>
                         </tr>
                     @endforelse
                 </tbody>

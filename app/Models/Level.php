@@ -12,10 +12,20 @@ class Level extends Model
 
     protected $fillable = [
         'name',
+        'arabic_name',
         'description',
         'sort_order',
         'status',
     ];
+
+    public static function tingkatanOptions(): array
+    {
+        return [
+            "I'dadiyah" => 'الإعدادية',
+            "Ibtida'iyah" => 'الابتدائية',
+            'Tsanawiyah' => 'الثانوية',
+        ];
+    }
 
     public function schoolClasses(): HasMany
     {

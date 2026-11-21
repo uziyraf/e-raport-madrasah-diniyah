@@ -9,10 +9,28 @@
             @method('PUT')
 
             <div>
+                <label for="tingkatan" class="mb-2 block text-sm font-medium text-neutral-700">Tingkatan</label>
+                <select id="tingkatan"
+                        class="w-full rounded-sm border border-stone-300 bg-white px-4 py-3 text-sm text-zinc-900 outline-none transition focus:border-teal-950 focus:ring-2 focus:ring-teal-950/10">
+                    <option value="">Pilih Tingkatan</option>
+                    @foreach (\App\Models\Level::tingkatanOptions() as $indo => $arab)
+                        <option value="{{ $indo }}" data-arabic="{{ $arab }}" {{ old('name', $level->name) === $indo ? 'selected' : '' }}>{{ $indo }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div>
                 <label for="name" class="mb-2 block text-sm font-medium text-neutral-700">Nama Jenjang</label>
                 <input type="text" name="name" id="name" value="{{ old('name', $level->name) }}"
                        class="w-full rounded-sm border border-stone-300 bg-white px-4 py-3 text-sm text-zinc-900 outline-none transition focus:border-teal-950 focus:ring-2 focus:ring-teal-950/10">
                 @error('name') <p class="mt-1 text-sm text-red-700">{{ $message }}</p> @enderror
+            </div>
+
+            <div>
+                <label for="arabic_name" class="mb-2 block text-sm font-medium text-neutral-700">Nama Jenjang (Arab)</label>
+                <input type="text" name="arabic_name" id="arabic_name" dir="rtl" value="{{ old('arabic_name', $level->arabic_name) }}"
+                       class="w-full rounded-sm border border-stone-300 bg-white px-4 py-3 text-sm text-zinc-900 outline-none transition focus:border-teal-950 focus:ring-2 focus:ring-teal-950/10">
+                @error('arabic_name') <p class="mt-1 text-sm text-red-700">{{ $message }}</p> @enderror
             </div>
 
             <div>
@@ -51,4 +69,26 @@
             </div>
         </form>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tingkatan = document.getElementById('tingkatan');
+            const nameInput = document.getElementById('name');
+            const arabicInput = document.getElementById('arabic_name');
+
+            if (!tingkatan || !nameInput || !arabicInput) {
+                return;
+            }
+
+            tingkatan.addEventListener('change', function () {
+                if (!this.value) {
+                    return;
+                }
+
+                const option = this.options[this.selectedIndex];
+                nameInput.value = this.value;
+                arabicInput.value = option.getAttribute('data-arabic') || '';
+            });
+        });
+    </script>
 </x-app-layout>
