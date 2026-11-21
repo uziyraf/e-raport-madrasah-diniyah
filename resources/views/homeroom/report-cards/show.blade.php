@@ -28,8 +28,15 @@
                     margin: 0;
                     padding: 0;
                 }
-                .font-arabic {
-                    font-family: 'Noto Naskh Arabic', 'Amiri', 'Traditional Arabic', serif;
+                aside, nav, header, .print\:hidden {
+                    display: none !important;
+                }
+                main {
+                    margin-left: 0 !important;
+                    padding-top: 0 !important;
+                }
+                main > div {
+                    padding: 0 !important;
                 }
             }
         </style>
