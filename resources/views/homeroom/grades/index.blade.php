@@ -76,10 +76,16 @@
                                 </span>
                             </div>
 
-                            <a href="{{ route('homeroom.grades.show', $assignment) }}"
-                               class="inline-flex w-full items-center justify-center rounded-sm bg-slate-50 px-4 py-3 text-sm font-medium text-slate-600 outline outline-1 outline-neutral-500 transition hover:bg-slate-100">
-                                Lihat Detail
-                            </a>
+                            <div class="grid grid-cols-2 gap-2">
+                                <a href="{{ route('homeroom.grades.show', $assignment) }}"
+                                   class="inline-flex items-center justify-center rounded-sm bg-slate-50 px-3 py-2.5 text-xs font-medium text-slate-600 outline outline-1 outline-neutral-500 transition hover:bg-slate-100">
+                                    Detail
+                                </a>
+                                <a href="{{ route('homeroom.grades.edit', $assignment) }}"
+                                   class="inline-flex items-center justify-center rounded-sm bg-teal-950 px-3 py-2.5 text-xs font-medium text-white transition hover:bg-emerald-900">
+                                    Input / Edit
+                                </a>
+                            </div>
                         </div>
                     @endforeach
                 </div>

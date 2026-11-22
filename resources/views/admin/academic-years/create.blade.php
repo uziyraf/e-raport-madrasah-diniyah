@@ -29,11 +29,30 @@
             </div>
 
             <div>
+                <label class="mb-2 block text-sm font-medium text-neutral-700">Semester yang Langsung Berjalan (Aktif)</label>
+                <div class="flex items-center gap-4">
+                    <label class="inline-flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="active_semester" value="Ganjil" {{ old('active_semester', 'Ganjil') === 'Ganjil' ? 'checked' : '' }}
+                               class="h-4 w-4 border-stone-300 text-teal-950 focus:ring-teal-950/10">
+                        <span class="text-sm text-neutral-700">Ganjil</span>
+                    </label>
+                    <label class="inline-flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="active_semester" value="Genap" {{ old('active_semester') === 'Genap' ? 'checked' : '' }}
+                               class="h-4 w-4 border-stone-300 text-teal-950 focus:ring-teal-950/10">
+                        <span class="text-sm text-neutral-700">Genap</span>
+                    </label>
+                </div>
+                @error('active_semester') <p class="mt-1 text-sm text-red-700">{{ $message }}</p> @enderror
+            </div>
+
+            <hr class="border-stone-200">
+
+            <div>
                 <label for="is_active" class="inline-flex items-center gap-3">
                     <input type="hidden" name="is_active" value="0">
-                    <input type="checkbox" name="is_active" id="is_active" value="1" {{ old('is_active') ? 'checked' : '' }}
+                    <input type="checkbox" name="is_active" id="is_active" value="1" {{ old('is_active', true) ? 'checked' : '' }}
                            class="h-5 w-5 rounded-sm border-stone-300 text-teal-950 focus:ring-teal-950/10">
-                    <span class="text-sm font-medium text-neutral-700">Aktif</span>
+                    <span class="text-sm font-medium text-neutral-700">Jadikan Tahun Ajaran Ini Langsung Aktif Sekarang</span>
                 </label>
                 @error('is_active') <p class="mt-1 text-sm text-red-700">{{ $message }}</p> @enderror
             </div>

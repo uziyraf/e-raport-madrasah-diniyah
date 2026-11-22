@@ -17,6 +17,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
         ]);
     })
+    ->withMiddleware(function (Middleware $middleware) {
+        $middleware->trustProxies(at: '*');
+        // existing alias config...
+    })
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();

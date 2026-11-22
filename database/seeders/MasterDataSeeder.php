@@ -18,9 +18,9 @@ class MasterDataSeeder extends Seeder
     {
         // Levels
         $levels = [
-            ['name' => 'Ibtida\'iyah', 'description' => 'Tingkat Dasar', 'sort_order' => 1],
-            ['name' => 'Tsanawiyah', 'description' => 'Tingkat Menengah', 'sort_order' => 2],
-            ['name' => 'Aliyah', 'description' => 'Tingkat Atas', 'sort_order' => 3],
+            ['name' => 'I\'dadiyah', 'arabic_name' => 'الإعدادية', 'description' => 'Tingkat Persiapan', 'sort_order' => 1],
+            ['name' => 'Ibtida\'iyah', 'arabic_name' => 'الابتدائية', 'description' => 'Tingkat Dasar', 'sort_order' => 2],
+            ['name' => 'Tsanawiyah', 'arabic_name' => 'الثانوية', 'description' => 'Tingkat Menengah', 'sort_order' => 3],
         ];
 
         foreach ($levels as $data) {
@@ -32,9 +32,9 @@ class MasterDataSeeder extends Seeder
         $parallels = ['A', 'B'];
         foreach ($levelIds as $levelName => $levelId) {
             $grades = match ($levelName) {
+                'I\'dadiyah' => range(1, 3),
                 'Ibtida\'iyah' => range(1, 6),
                 'Tsanawiyah' => range(1, 3),
-                'Aliyah' => range(1, 3),
                 default => [],
             };
             $sort = 0;

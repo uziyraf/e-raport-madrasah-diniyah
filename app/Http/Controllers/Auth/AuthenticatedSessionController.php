@@ -28,6 +28,10 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        if ($request->user()->hasRole('wali_santri')) {
+            return redirect()->intended(route('guardian.dashboard'));
+        }
+
         return redirect()->intended(route('dashboard'));
     }
 

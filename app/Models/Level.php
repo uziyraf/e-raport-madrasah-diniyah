@@ -12,6 +12,7 @@ class Level extends Model
 
     protected $fillable = [
         'name',
+        'arabic_name',
         'description',
         'sort_order',
         'status',
