@@ -53,10 +53,12 @@
                                 <th class="border-b border-stone-300 bg-white px-4 py-4 text-left text-sm font-medium text-neutral-700">Status Legalisir</th>
                                 <th class="border-b border-stone-300 bg-white px-4 py-4 text-left text-sm font-medium text-neutral-700">Keterangan</th>
                             @elseif ($journalType === 'nilai_harian')
+                                <th class="border-b border-stone-300 bg-white px-4 py-4 text-left text-sm font-medium text-neutral-700">Mapel</th>
                                 <th class="border-b border-stone-300 bg-white px-4 py-4 text-left text-sm font-medium text-neutral-700">Nilai</th>
                                 <th class="border-b border-stone-300 bg-white px-4 py-4 text-left text-sm font-medium text-neutral-700">Predikat</th>
                                 <th class="border-b border-stone-300 bg-white px-4 py-4 text-left text-sm font-medium text-neutral-700">Keterangan</th>
                             @elseif ($journalType === 'tamrinan')
+                                <th class="border-b border-stone-300 bg-white px-4 py-4 text-left text-sm font-medium text-neutral-700">Mapel</th>
                                 <th class="border-b border-stone-300 bg-white px-4 py-4 text-left text-sm font-medium text-neutral-700">Nilai</th>
                                 <th class="border-b border-stone-300 bg-white px-4 py-4 text-left text-sm font-medium text-neutral-700">Predikat</th>
                                 <th class="border-b border-stone-300 bg-white px-4 py-4 text-left text-sm font-medium text-neutral-700">Keterangan</th>
@@ -96,6 +98,7 @@
                                     </td>
                                     <td class="border-t border-stone-300 px-4 py-3 text-base text-zinc-900">{{ $journal->note ?? '-' }}</td>
                                 @elseif ($journalType === 'nilai_harian')
+                                    <td class="border-t border-stone-300 px-4 py-3 text-base text-zinc-900">{{ $journal->teachingAssignment?->subject->name ?? '-' }}</td>
                                     <td class="border-t border-stone-300 px-4 py-3 text-base text-zinc-900">{{ $journal->daily_score ?? '-' }}</td>
                                     <td class="border-t border-stone-300 px-4 py-3">
                                         @if ($journal->predicate)
@@ -106,6 +109,7 @@
                                     </td>
                                     <td class="border-t border-stone-300 px-4 py-3 text-base text-zinc-900">{{ $journal->note ?? '-' }}</td>
                                 @elseif ($journalType === 'tamrinan')
+                                    <td class="border-t border-stone-300 px-4 py-3 text-base text-zinc-900">{{ $journal->teachingAssignment?->subject->name ?? '-' }}</td>
                                     <td class="border-t border-stone-300 px-4 py-3 text-base text-zinc-900">{{ $journal->exam_score ?? '-' }}</td>
                                     <td class="border-t border-stone-300 px-4 py-3">
                                         @if ($journal->predicate)

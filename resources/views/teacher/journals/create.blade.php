@@ -51,7 +51,7 @@
                             <select name="status" id="status"
                                     class="w-full rounded-sm border border-stone-300 bg-white px-4 py-3 text-sm text-zinc-900 outline-none transition focus:border-teal-950 focus:ring-2 focus:ring-teal-950/10">
                                 <option value="draft" {{ old('status') === 'draft' ? 'selected' : '' }}>Draft</option>
-                                <option value="submitted" {{ old('status') === 'submitted' ? 'selected' : '' }}>Submitted</option>
+                                <option value="submitted" {{ old('status', 'submitted') === 'submitted' ? 'selected' : '' }}>Submitted</option>
                             </select>
                             @error('status') <p class="mt-1 text-sm text-red-700">{{ $message }}</p> @enderror
                         </div>

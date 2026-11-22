@@ -61,7 +61,7 @@
                                 <select name="status" id="status"
                                         class="w-full rounded-sm border border-stone-300 bg-white px-4 py-3 text-sm text-zinc-900 outline-none transition focus:border-teal-950 focus:ring-2 focus:ring-teal-950/10">
                                     <option value="draft" {{ old('status') === 'draft' ? 'selected' : '' }}>Draft</option>
-                                    <option value="submitted" {{ old('status') === 'submitted' ? 'selected' : '' }}>Submitted</option>
+                                    <option value="submitted" {{ old('status', 'submitted') === 'submitted' ? 'selected' : '' }}>Submitted</option>
                                 </select>
                                 @error('status') <p class="mt-1 text-sm text-red-700">{{ $message }}</p> @enderror
                             </div>
@@ -139,6 +139,28 @@
                     @if ($journalType === 'nilai_harian')
                         <div>
                             <h3 class="mb-4 text-base font-semibold text-teal-950">Nilai Harian</h3>
+
+                            @if ($teachingAssignments->isEmpty())
+                                <div class="mb-4 rounded-sm bg-orange-100 px-4 py-3 text-sm font-medium text-orange-950">
+                                    Belum ada mapel yang dijadwalkan untuk kelas ini. Buat jadwal pelajaran terlebih dahulu.
+                                </div>
+                            @endif
+
+                            <div class="mb-5">
+                                <label for="teaching_assignment_id" class="mb-2 block text-sm font-medium text-neutral-700">Mapel/Fan <span class="text-red-700">*</span></label>
+                                <select name="teaching_assignment_id" id="teaching_assignment_id" required
+                                        class="w-full rounded-sm border border-stone-300 bg-white px-4 py-3 text-sm text-zinc-900 outline-none transition focus:border-teal-950 focus:ring-2 focus:ring-teal-950/10">
+                                    <option value="">-- Pilih Fan/Mapel --</option>
+                                    @foreach ($teachingAssignments as $ta)
+                                        <option value="{{ $ta->id }}" {{ old('teaching_assignment_id') == $ta->id ? 'selected' : '' }}>
+                                            {{ $ta->subject->name }} - {{ $ta->teacher?->name ?? '-' }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('teaching_assignment_id') <p class="mt-1 text-sm text-red-700">{{ $message }}</p> @enderror
+                                <p class="mt-1 text-xs text-neutral-500">Nilai dapat diisi berkali-kali; raport memakai rata-rata.</p>
+                            </div>
+
                             <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
                                 <div>
                                     <label for="daily_score" class="mb-2 block text-sm font-medium text-neutral-700">Nilai Harian</label>
@@ -171,7 +193,7 @@
                                         <option value="">-- Pilih Fan/Mapel --</option>
                                         @foreach ($teachingAssignments as $ta)
                                             <option value="{{ $ta->id }}" {{ old('teaching_assignment_id') == $ta->id ? 'selected' : '' }}>
-                                                {{ $ta->subject->name }} - {{ $ta->schoolClass->level->name }} {{ $ta->schoolClass->name }}
+                                                {{ $ta->subject->name }} - {{ $ta->teacher?->name ?? '-' }} - {{ $ta->schoolClass->level->name }} {{ $ta->schoolClass->name }}
                                                 ({{ $ta->academicYear->name }} / {{ $ta->semester->name }})
                                             </option>
                                         @endforeach

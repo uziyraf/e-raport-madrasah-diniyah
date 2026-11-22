@@ -34,7 +34,7 @@ class StoreJournalRequest extends FormRequest
             'status' => ['required', 'in:draft,submitted'],
         ];
 
-        if ($this->input('journal_type') === 'tamrinan') {
+        if (in_array($this->input('journal_type'), ['nilai_harian', 'tamrinan'], true)) {
             $rules['teaching_assignment_id'] = ['required', 'exists:teaching_assignments,id'];
         }
 
@@ -58,7 +58,7 @@ class StoreJournalRequest extends FormRequest
             'exam_score.max' => 'Nilai ujian maksimal 100.',
             'status.required' => 'Status jurnal wajib dipilih.',
             'status.in' => 'Status jurnal tidak valid.',
-            'teaching_assignment_id.required' => 'Fan/Mapel yang diujikan wajib dipilih untuk jurnal tamrinan.',
+            'teaching_assignment_id.required' => 'Fan/Mapel wajib dipilih untuk jurnal nilai harian dan tamrinan.',
         ];
     }
 }

@@ -34,6 +34,9 @@
                 @csrf @method('PUT')
                 <input type="hidden" name="student_id" value="{{ $journal->student_id }}">
                 <input type="hidden" name="journal_type" value="{{ $journal->journal_type }}">
+                @if ($journal->journal_type !== 'tamrinan')
+                    <input type="hidden" name="teaching_assignment_id" value="{{ $journal->teaching_assignment_id }}">
+                @endif
 
                 <div>
                     <h3 class="mb-4 text-base font-semibold text-teal-950">Data Dasar</h3>

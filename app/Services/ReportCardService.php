@@ -35,7 +35,7 @@ class ReportCardService
             ->where('student_id', $student->id)
             ->where('journal_type', 'nilai_harian')
             ->where('status', 'submitted')
-            ->selectRaw('teaching_assignment_id, MAX(daily_score) as daily_score')
+            ->selectRaw('teaching_assignment_id, AVG(daily_score) as daily_score')
             ->groupBy('teaching_assignment_id')
             ->pluck('daily_score', 'teaching_assignment_id');
 

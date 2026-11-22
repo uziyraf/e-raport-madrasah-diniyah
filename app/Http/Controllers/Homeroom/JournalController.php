@@ -166,7 +166,8 @@ class JournalController extends Controller
             'catatan' => 'Catatan',
         ];
 
-        $journals = TeacherJournal::where('teacher_id', $teacher->id)
+        $journals = TeacherJournal::with('teachingAssignment.subject')
+            ->where('teacher_id', $teacher->id)
             ->where('journal_type', $journalType)
             ->where('student_id', $student->id)
             ->where('school_class_id', $homeroom->school_class_id)
@@ -226,7 +227,7 @@ class JournalController extends Controller
             $homeroom->semester_id,
         );
 
-        $teachingAssignments = TeachingAssignment::with(['subject', 'schoolClass.level', 'academicYear', 'semester'])
+        $teachingAssignments = TeachingAssignment::with(['subject', 'teacher', 'schoolClass.level', 'academicYear', 'semester'])
             ->whereIn('id', $assignmentIds)
             ->orderBy('created_at')
             ->get();
@@ -370,7 +371,7 @@ class JournalController extends Controller
             $teacherJournal->semester_id,
         );
 
-        $teachingAssignments = TeachingAssignment::with(['subject', 'schoolClass.level', 'academicYear', 'semester'])
+        $teachingAssignments = TeachingAssignment::with(['subject', 'teacher', 'schoolClass.level', 'academicYear', 'semester'])
             ->whereIn('id', $assignmentIds)
             ->orderBy('created_at')
             ->get();
