@@ -31,6 +31,35 @@ class SchoolClass extends Model
         return $this->belongsTo(Level::class);
     }
 
+    public function arabicName(): string
+    {
+        $grade = strtr((string) ($this->grade_level ?? ''), [
+            '0' => '٠',
+            '1' => '١',
+            '2' => '٢',
+            '3' => '٣',
+            '4' => '٤',
+            '5' => '٥',
+            '6' => '٦',
+            '7' => '٧',
+            '8' => '٨',
+            '9' => '٩',
+        ]);
+
+        $parallel = strtr(strtoupper((string) ($this->parallel_name ?? '')), [
+            'A' => 'أ',
+            'B' => 'ب',
+            'C' => 'ج',
+            'D' => 'د',
+            'E' => 'ه',
+            'F' => 'و',
+        ]);
+
+        $level = $this->level?->arabicName() ?? '';
+
+        return trim($grade . ' ' . $level . ' ' . $parallel);
+    }
+
     public function scopeActive($query)
     {
         return $query->where('status', 'active');

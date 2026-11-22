@@ -326,11 +326,11 @@ class DummyJadwalPelajaranSeeder extends Seeder
                 'kelas' => $kelasTS1, 'mapel' => $subjectHadits, 'guru' => $guruWaliIB1,
             ],
             [
-                'hari' => 'Kamis', 'jam_mulai' => '18:00:00', 'jam_selesai' => '18:45:00',
+                'hari' => 'Sabtu', 'jam_mulai' => '18:00:00', 'jam_selesai' => '18:45:00',
                 'kelas' => $kelasTS2, 'mapel' => $subjectShorof, 'guru' => $guruWaliTS1,
             ],
             [
-                'hari' => 'Kamis', 'jam_mulai' => '18:45:00', 'jam_selesai' => '19:30:00',
+                'hari' => 'Ahad', 'jam_mulai' => '18:45:00', 'jam_selesai' => '19:30:00',
                 'kelas' => $kelasTS2, 'mapel' => $subjectTajwid, 'guru' => $guruTajwid,
             ],
         ];

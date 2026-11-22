@@ -18,13 +18,16 @@ class Level extends Model
         'status',
     ];
 
-    public static function tingkatanOptions(): array
+    public const ARABIC_NAMES = [
+        "I'dadiyah" => 'الإعدادية',
+        "Ibtida'iyah" => 'الابتدائية',
+        'Tsanawiyah' => 'الثانوية',
+        'Aliyah' => 'العالية',
+    ];
+
+    public function arabicName(): string
     {
-        return [
-            "I'dadiyah" => 'الإعدادية',
-            "Ibtida'iyah" => 'الابتدائية',
-            'Tsanawiyah' => 'الثانوية',
-        ];
+        return $this->arabic_name ?: (self::ARABIC_NAMES[$this->name] ?? $this->name);
     }
 
     public function schoolClasses(): HasMany
